@@ -1,0 +1,127 @@
+// 
+// English language file for ExampleObject plugin
+//
+
+<!-- language file start -->
+obj_xtdo#:#Todolist
+objs_xtdo#:#Todolist
+obj_xtdo_duplicate#:#Copy
+objs_xtdo_duplicate#:#Copy Todolist
+obj_xtdo_select#:#Choose Todoliste
+xtdo_add#:#Add Todolist
+xtdo_new#:#Add new Todolist
+xtdo_read#:#Read permissions for the Todolist
+xtdo_write#:#Edit Todolist 
+xtdo_delete#:#Delete Todolist
+xtdo_visible#:#The Todolist is visible
+xtdo_edit_permission#:#Edit permission settings
+crs_create_xtdo#:#Create Todolist
+grp_create_xtdo#:#Create Todoliste
+fold_create_xtdo#:#Create Todoliste
+root_create_xtdo#:#Create Todoliste
+cat_create_xtdo#:#Create Todoliste
+content#:#Content
+title#:#Title
+description#:#Description
+
+save#:#Save
+cancel#:#Cancel
+edit#:#Edit
+status#:#Status
+offline#:#Offline
+example_plugin_configuration#:#Todolists Plugin Konfiguration
+setting_1#:#Setting 1
+setting_2#:#Setting 2
+saving_invoked#:#Save procedure has been executed. Please note that this example does not save anything to DB.
+
+xtdo_edit_content#:#Tasks can be edited
+xtdo_add_entry#:#New Tasks can be added
+task#:#Task
+startdate#:#Start date
+enddate#:#End date
+description#:#Description
+createdby#:#Created by
+updatedby#:#Updated by
+attached_to#:#Belonging list
+status#:#Status
+
+first_start#:#Initial settings
+text_befor_id#:#List ID: 
+text_after_id_collectlist#:#These is required for the correct collect list assignment
+percentbar_text#:#are already processed
+addtaskall#:#Add all lists
+todo#:#Task
+new_task#:#Add new task
+list#:#Taskslist
+the_list#:#The Taskslist
+startdate#:#Start date
+enddate#:#End date
+moreProperties#:#Advanced settings
+newtask#:#Add task
+
+action#:#Action
+reallydelete#:#Do you really want to delete this object?
+deletetxt#:#Do you really want to delete this object?
+status_change#:#Change status
+edit_task#:#Edit Task
+startendchange#:#Should be the date modified?
+failure_collectlist#:#The selected object is not a collect list. Please choose a collect list!
+percent#:#Percent
+doublesubmission#:#The web page has been reloaded, your version was not up-to-date
+
+properties#:#Properties
+edit_properties#:#Edit properties
+edit_special#:#Advanced properties
+edit_fields#:#Fields options
+edit_no_collectlist#:#Collect list settings
+enddate_props#:#End date settings
+
+edit_status_checkbox#:#Show Change Status button
+edit_status_checkbox_info#:#Activates a button whith which the status can be changed. If the button is deactivated the status can be changed through the red cross icon in the status column.
+
+edit_status_permission#:#Status edit permissions
+edit_status_permission_info#:#If the option is activated the user will need an "Edit content" permission to be able to change the task status. If the option is deactivated the task status can be changed from every user who has a read permission.
+
+percent_line_option#:#Show working progress bar
+percent_line_option_info#:#Activates a progress bar over the tasks table which shows the working progress.
+
+are_finished_shown#:#Show only active tasks
+are_finished_shown_info#:#If the option is activated only the not closed tasks will be shown.
+
+before_startdate_shown#:#Start date reached
+before_startdate_shown_info#:#If the option is activated only the tasks which have reached the start date will be shown.
+
+collectlist#:#Collect list ID
+collectlist_info#:#Here should be entered the ID of the collect list in which the ToDo list should appear. You can find the ID of the collect list in the collect list settings.
+
+show_createdby#:#Show creator
+show_createdby_info#:#Activates a table column where the creator of a certain task is shown.
+
+show_updatedby#:#Show "changed by"
+show_updatedby_info#:#Activates a table column where you can see the name of the last person who has made any changes in the task.
+
+show_startdate#:#Show start date
+show_startdate_info#:#Activates a table column wehere the start date of the task is shown.
+
+both#:#Closed and active
+done#:#Active
+undone#:#Closed
+
+is_collectlist#:#Collect list
+is_collectlist_info#:#Once activated the list will become a collect list. This means that the chosen list can contain tasks from other lists, as well as own tasks.
+
+enddate_warning#:#Mark off end date
+enddate_warning_info#:#If the option is activated the end date of a certain task will be modified as soon as it exceeds.
+
+enddate_cursive#:#End date italic
+enddate_cursive_info#:#If the option is activated, the end date will be shown with italic font after it exceeds.
+
+enddate_fat#:#End date bold
+enddate_fat_info#:#If the option is activated, the end date will be shown with bold font after it exceeds.
+
+enddate_color#:#End date colorful
+enddate_color_info#:#If the option is activated, the end date will be shown with the selected color after the date exceeds.
+
+startdate_before#:#Show not reached start date
+
+datebefor#:#The start date is not located before the end date!
