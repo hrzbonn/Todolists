@@ -658,6 +658,7 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 		foreach ($ids as $id)
 		{
 			$ilDB->manipulate("DELETE FROM  rep_robj_xtdo_milsto WHERE id = ".$ilDB->quote($id, "integer"));
+			$ilDB->manipulate("DELETE FROM  rep_robj_xtdo_tasks WHERE milestone_id = ".$ilDB->quote($id, "integer"));
 		}
 		$this->cancel_edit_milestone();
 	}
