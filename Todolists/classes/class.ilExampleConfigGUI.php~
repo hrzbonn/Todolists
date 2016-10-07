@@ -1,0 +1,44 @@
+<?php
+
+include_once("./Services/Component/classes/class.ilPluginConfigGUI.php");
+ 
+/**
+ * Example configuration user interface class
+ *
+ * @author Alex Killing <alex.killing@gmx.de>
+ * @version $Id$
+ *
+ */
+class ilExampleConfigGUI extends ilPluginConfigGUI
+{
+	/**
+	* Handles all commmands, default is "configure"
+	*/
+	function performCommand($cmd)
+	{
+
+		switch ($cmd)
+		{
+			case "configure":
+				$this->$cmd();
+				break;
+
+		}
+	}
+
+	/**
+	 * Configure
+	 *
+	 * @param
+	 * @return
+	 */
+	function configure()
+	{
+		global $tpl;
+
+		$tpl->setContent("Hello World");
+
+	}
+
+}
+?>
