@@ -2,9 +2,11 @@
 
 Install the plugin
 
-mkdir -p mkdir -p Customizing/global/plugins/Services/Repository/RepositoryObject/Todolists
+mkdir -p Customizing/global/plugins/Services/Repository/RepositoryObject/Todolists
+
 cd Customizing/global/plugins/Services/Repository/RepositoryObject/Todolists
-git clone "Hier Git Link einfügen"
+
+git clone https://github.com/hrzbonn/Todolists.git
 
 and activate it in the ILIAS-Admin-GUI.
 
