@@ -19,5 +19,7 @@ Im Tab Einstellungen kann man diverse Einstellungen wählen. Im Tab Meilensteine
 Zusätzliche Rechte:
 
 -Das Recht "Eintragen" erlaubt es neue Aufgaben einer Liste/einem Meilenstein hinzuzufügen.
+
 -Das Recht "Inhalt bearbeiten" erlaubt es bereits erstellte Aufgaben zu verändern sowie zu löschen.
+
 -Das Recht "Einstellungen Bearbeiten" erlaubt den Zugriff auf die Einstellungen sowie das erstellen von Meilensteinen. Die einzelnen Einstellungsmöglichkeiten werden in den Einstellungen ausführlich beschrieben.
