@@ -2,9 +2,9 @@
 
 Install the plugin
 
-mkdir -p Customizing/global/plugins/Services/Repository/RepositoryObject/Todolists
+mkdir -p Customizing/global/plugins/Services/Repository/RepositoryObject
 
-cd Customizing/global/plugins/Services/Repository/RepositoryObject/Todolists
+cd Customizing/global/plugins/Services/Repository/RepositoryObject
 
 git clone https://github.com/hrzbonn/Todolists.git
 
