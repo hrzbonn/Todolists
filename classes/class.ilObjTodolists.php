@@ -158,6 +158,7 @@ class ilObjTodolists extends ilObjectPlugin
 		$new_obj->setShowEditStatusButton($this->getShowEditStatusButton());
 		$new_obj->setEditStatusPermission($this->getEditStatusPermission());
 		$new_obj->setTasks($this->getId());
+		$new_obj->setMilestones($this->getId());
 		$new_obj->setEnddateWarning($this->getEnddateWarning());
 		$new_obj->setEnddateCursive($this->getEnddateCursive());
 		$new_obj->setEnddateFat($this->getEnddateFat());
@@ -169,6 +170,63 @@ class ilObjTodolists extends ilObjectPlugin
 
 		$new_obj->update();
 	}
+
+	function setMilestones($object_id)
+	{
+		global $ilDB,$ilUser;
+
+		$sql_string="SELECT * FROM rep_robj_xtdo_milsto WHERE objectid = ". $ilDB->quote($object_id,"integer");
+		$result = $ilDB->query($sql_string);
+
+		while ($record = $ilDB->fetchAssoc($result))
+		{
+
+			if($record["description"] == NULL)
+			{
+				$record["description"]='';
+			}
+
+			$ilDB->manipulateF("INSERT INTO rep_robj_xtdo_milsto (objectid, milestone, description,progress,created_by,updated_by) VALUES " .
+				" (%s,%s,%s,%s,%s,%s)",
+				array("integer", "text", "text", "integer", "integer", "integer"),
+				array($this->getId(), $record["milestone"], $record["description"], $record["progress"], $record["created_by"], $record["updated_by"])
+			);
+
+
+			$sql_string="SELECT id FROM rep_robj_xtdo_milsto WHERE objectid = ". $ilDB->quote($this->getId(),"integer")." AND milestone = '".$record["milestone"]."'";
+			$in_result = $ilDB->query($sql_string);
+			while ($in_record = $ilDB->fetchAssoc($in_result))
+			{
+				$milestone_id =$in_record["id"];
+			}
+
+			$sql_string="SELECT * FROM rep_robj_xtdo_tasks WHERE objectid = ". $ilDB->quote($object_id,"integer")." AND milestone_id = ". $ilDB->quote($record["id"],"integer");
+			$in_result = $ilDB->query($sql_string);
+			while ($in_record = $ilDB->fetchAssoc($in_result))
+			{
+				if($in_record["description"] == NULL)
+				{
+					$in_record["description"]='';
+				}
+				$ilDB->manipulateF("INSERT INTO rep_robj_xtdo_tasks (objectid, tasks, startdate, enddate, description,edit_status,created_by,updated_by,milestone_id) VALUES " .
+					" (%s,%s,%s,%s,%s,%s,%s,%s,%s)",
+					array("integer", "text", "text", "text", "text", "integer","text","text","integer"),
+					array($this->getId(), $in_record["tasks"], $in_record["startdate"], $in_record["enddate"], $in_record["description"], $in_record["edit_status"],$in_record["created_by"],$in_record["updated_by"],$milestone_id)
+				);
+			}
+
+
+
+
+		}
+
+
+
+
+
+	}
+
+
 	
 	function setEnddateWarning($a_val)
 	{
@@ -327,11 +385,13 @@ class ilObjTodolists extends ilObjectPlugin
 			{
 				$record["updated_by"]='';
 			}
-			$ilDB->manipulateF("INSERT INTO rep_robj_xtdo_tasks (objectid, tasks, startdate, enddate, description,edit_status,created_by,updated_by) VALUES " .
-				" (%s,%s,%s,%s,%s,%s,%s,%s)",
-				array("integer", "text", "text", "text", "text", "integer","text","text"),
-				array($this->getId(), $record["tasks"], $record["startdate"], $record["enddate"], $record["description"], $record["edit_status"],$record["created_by"],$record["updated_by"])
+			if($record["milestone_id"] == 0)
+			$ilDB->manipulateF("INSERT INTO rep_robj_xtdo_tasks (objectid, tasks, startdate, enddate, description,edit_status,created_by,updated_by,milestone_id) VALUES " .
+				" (%s,%s,%s,%s,%s,%s,%s,%s,%s)",
+				array("integer", "text", "text", "text", "text", "integer","text","text","integer"),
+				array($this->getId(), $record["tasks"], $record["startdate"], $record["enddate"], $record["description"], $record["edit_status"],$record["created_by"],$record["updated_by"],0)
 			);
+
 		}
 
 	}
