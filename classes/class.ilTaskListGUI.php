@@ -17,6 +17,7 @@ class ilTaskListGUI
     private $objid;
     private $limit;
     private $taskListRefId;
+    private $heigthAndWidth;
 
 
 
@@ -24,6 +25,7 @@ class ilTaskListGUI
     function __construct($column_name_array,$objectid,$ref_id,$optionen,$listnname)
     {
         global $ilAccess;
+        $this->heigthAndWidth="100%";
         $this->limit=10;
         $this->objid=$objectid;
         $this->taskListRefId=$ref_id;
@@ -41,8 +43,9 @@ class ilTaskListGUI
 
         $columns = array();
         $add_at_description=$this->addAtDescriptionWidth();
-        
 
+        if(!$this->isStatusPosition())   array_push($columns,$this->table_gui->defineColumn($column_name_array[7],'edit_status','edit_status',3,'boolean',true,$optionen));
+        if($this->isEditStatusButtonShown() AND !$this->isStatusPosition()) array_push($columns,$this->table_gui->defineColumn($column_name_array[8],'id','',10,'text',false));
         array_push($columns,$this->table_gui->defineColumn($column_name_array[0],'tasks','tasks',30,'text',true) );
         if($this->isShowStartdate())	array_push($columns,$this->table_gui->defineColumn($column_name_array[1],'startdate','startdate',10,'date',true));
         array_push($columns,$this->table_gui->defineColumn($column_name_array[2],'enddate','enddate',10,'date',true));
@@ -50,8 +53,8 @@ class ilTaskListGUI
         if($this->isShowCreatedby())	array_push($columns,$this->table_gui->defineColumn($column_name_array[4],'created_by','created_by',4,'text',true));
         if($this->isShowUpdatedby())	array_push($columns,$this->table_gui->defineColumn($column_name_array[5],'updated_by','updated_by',3,'text',true));
         if($this->isCollectlist())		array_push($columns,$this->table_gui->defineColumn($column_name_array[6],'','attechedto',10,'text',true));
-        array_push($columns,$this->table_gui->defineColumn($column_name_array[7],'edit_status','edit_status',3,'boolean',true,$optionen));
-        if($this->isEditStatusButtonShown()) array_push($columns,$this->table_gui->defineColumn($column_name_array[8],'id','',10,'text',false));
+        if($this->isStatusPosition())   array_push($columns,$this->table_gui->defineColumn($column_name_array[7],'edit_status','edit_status',3,'boolean',true,$optionen));
+        if($this->isEditStatusButtonShown() AND $this->isStatusPosition()) array_push($columns,$this->table_gui->defineColumn($column_name_array[8],'id','',10,'text',false));
 
         $this->columns=$columns;
         $this->table_gui->setColumns($columns);
@@ -85,6 +88,11 @@ class ilTaskListGUI
 
         return $add_at_description;
     }
+    
+    public function setHeigthAndWidth($heigthAndWidth)
+    {
+        $this->heigthAndWidth=$heigthAndWidth;    
+    }
 
     protected function SqlSelectQueryOneValue($database_name)
     {
@@ -98,6 +106,10 @@ class ilTaskListGUI
         return $wert;
     }
 
+    protected function isStatusPosition()
+    {
+        return $this->SqlSelectQueryOneValue('status_position');
+    }
     
     function setTasklistObjectId($value)
     {
@@ -273,12 +285,16 @@ class ilTaskListGUI
 
     protected function getOkIconImage()
     {
-        return "<img src=\"Customizing/global/plugins/Services/Repository/RepositoryObject/Todolists/templates/images/icon_ok.svg\">";
+        return "<img heigth='".$this->heigthAndWidth."' width='".$this->heigthAndWidth."' src=\"Customizing/global/plugins/Services/Repository/RepositoryObject/Todolists/templates/images/icon_ok.svg\">";
     }
 
     protected function getNotOkIconImage()
     {
-        return "<img src=\"Customizing/global/plugins/Services/Repository/RepositoryObject/Todolists/templates/images/icon_not_ok.svg\">";
+        $src_not_ok="Customizing/global/plugins/Services/Repository/RepositoryObject/Todolists/templates/images/icon_not_ok.svg";
+        $src_ok="Customizing/global/plugins/Services/Repository/RepositoryObject/Todolists/templates/images/icon_ok.svg";
+        $src_mouseover="Customizing/global/plugins/Services/Repository/RepositoryObject/Todolists/templates/images/icon_mouseover.svg";
+        if(!$this->isEditStatusButtonShown())return "<img heigth='".$this->heigthAndWidth."' width='".$this->heigthAndWidth."' src='".$src_not_ok."' onmouseover=\"src='". $src_mouseover."'\" onmouseout=\"src='".$src_not_ok."'\" />";
+        else return "<img heigth='".$this->heigthAndWidth."' width='".$this->heigthAndWidth."' src='".$src_not_ok."'/>";
     }
 
     protected function getOkIcon($id)
@@ -384,43 +400,111 @@ class ilTaskListGUI
 
     protected function getDataSorted($record,$edit_status)
     {
+        global $ilUser;
         $sorted_record = array();
         foreach ($record as $key => $value) {
-            if ($key == "edit_status") {
 
-                if ($this->isCollectlist())
-                {
-
-                    $worklistname=$this->getPath($record['id']).'->'.$this->getWorkListNameWithTaskId($record['id']);
-                    $ref_id=$this->getLinkRefId($this->getObjectIdWithTaskId($record['id']));
-
-
-                    $add_link = $_SERVER["REQUEST_URI"];
-                    $add_link =substr($add_link,strpos($add_link,"cmdNode=")+8);
-
-
-                    $link="ilias.php?ref_id=".$ref_id."&cmd=showContent&cmdClass=ilobjtodolistsgui&cmdNode=".$add_link;
-                    if($this->getWorkListNameWithTaskId($record['id']) != "" OR $this->getWorkListNameWithTaskId($record['id']) != NULL)
-                        $sorted_record['liste'] = "<a href='".$link."'>".$worklistname."<a>";
-                    else $sorted_record["liste"]="";
-                }
-                $sorted_record[$key] = $value;
-            }
-            if ($key == "id") {
-                if ($this->isEditStatusButtonShown()) $sorted_record['fertig'] = $this->setChangeButton($value, $edit_status);
-                $sorted_record[$key] = $value;
-            }
-            if($key == "created_by" OR $key == "updated_by")
+            switch ($key)
             {
-                global $ilUser;
-                $sorted_record[$key] = $ilUser->getLoginByUserId($value);
+                case "tasks":
+                    if(!$this->isStatusPosition() AND $this->isEditStatusButtonShown())$sorted_record["fertig"]=$record["fertig"];
+                    $sorted_record[$key] = $value;
+                    break;
+                case "edit_status":
+                    if($this->isStatusPosition() AND $this->isCollectlist())$sorted_record["attechedto"]=$record["attechedto"];
+                    $sorted_record[$key] = $value;
+                    break;
+                default:
+                    $sorted_record[$key] = $value;
             }
-            if ($key != "id" AND $key != "edit_status" AND $key != "created_by" AND $key != "updated_by") {
-                $sorted_record[$key] = $value;
-            }
+
         }
         return $sorted_record;
     }
+
+    function getWorklistLinkForCollectlist($id)
+    {
+        $worklistname=$this->getPath($id).'->'.$this->getWorkListNameWithTaskId($id);
+        $ref_id=$this->getLinkRefId($this->getObjectIdWithTaskId($id));
+
+
+        $add_link = $_SERVER["REQUEST_URI"];
+        $add_link =substr($add_link,strpos($add_link,"cmdNode=")+8);
+
+
+        $link="ilias.php?ref_id=".$ref_id."&cmd=showContent&cmdClass=ilobjtodolistsgui&cmdNode=".$add_link;
+        if($this->getWorkListNameWithTaskId($id) != "" OR $this->getWorkListNameWithTaskId($id) != NULL)
+            return "<a href='".$link."'>".$worklistname."<a>";
+        else return "";
+    }
+
+    function preDataSorted($record,$edit_status)
+    {
+        global $ilUser;
+        $sorted_record = array();
+        foreach ($record as $key => $value) {
+
+            switch ($key)
+            {
+                case "created_by":
+                    $sorted_record[$key] = $ilUser->getLoginByUserId($value);
+                    break;
+                case "updated_by":
+                    $sorted_record[$key] = $ilUser->getLoginByUserId($value);
+                    break;
+                case "id":
+                    $sorted_record[$key] = $value;
+                    if ($this->isEditStatusButtonShown()) $sorted_record['fertig'] = $this->setChangeButton($value, $edit_status);
+                    if ($this->isCollectlist())$sorted_record["attechedto"]=$this->getWorklistLinkForCollectlist($value);
+                    break;
+                case "description":
+                    if(strlen($record[$key]) > 100)
+                    {
+                        $more="<a>...weiter lesen.</a>";
+
+
+
+                        $pos = strripos($record[$key]," ");
+                        if($pos==false)$pos=100;
+                        $string=substr($record[$key],0,100);
+                        $pos = strripos($string," ");
+                        if($pos==false)$pos=100;
+                        $string=substr($record[$key],0,$pos+1);
+                        $string=$string.$more;
+
+                        $div="<div class = 'more'>
+                                <div class = 'weniger'>".$string."</div>
+                                <div class = 'all'>".$record[$key]."</div>
+                              </div>";
+                        $css="<style>
+                            .more .all
+                            {
+                                display: none;
+                            }
+                            .more:hover .all 
+                            {
+                                display: inline;
+                            }
+                            .more:hover .weniger
+                            {
+                                display: none;
+                            }
+                        </style>";
+
+                        $string=$css.$div;
+                    }
+
+                    $sorted_record[$key]=$string;
+                    break;
+                default:
+                    $sorted_record[$key] = $value;
+            }
+
+        }
+        return $sorted_record;
+    }
+
+
 
     function setDBdata($sql_string)
     {
@@ -449,7 +533,7 @@ class ilTaskListGUI
                 $edit_status = $record['edit_status'];
                 $record['edit_status'] = $this->getWorkStatus($record['edit_status'], $record['id']);
 
-
+                $record=$this->preDataSorted($record,$edit_status);
                 $sorted_record=$this->getDataSorted($record,$edit_status);
                 array_push($allData, $sorted_record);
              }

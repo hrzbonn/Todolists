@@ -138,3 +138,8 @@ percentbar_text#:#der Hauptaufgabenliste sind bereits abgearbeitet
 new_task_all#:#Neue Aufgabe allen hinzufügen
 really_add#:#Möchten Sie diese Aufgabe wirklich allen Listen hinzufügen?
 choosemilestone#:#Hier können sie den Meilensteinen der Listen, diese Aufgabe zuweisen.
+
+
+edit_status_props#:#Einstellungen zum Status
+edit_status_position#:#Status Position
+edit_status_position_info#:#Wird diese Option aktiviert wird der Status neben dem Aktionsbutton angezeigt.

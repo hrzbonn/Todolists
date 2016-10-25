@@ -52,7 +52,7 @@ class ilObjTodolists extends ilObjectPlugin
 		global $ilDB;
 		
 		$ilDB->manipulate("INSERT INTO rep_robj_xtdo_data ".
-			"(id, is_online, are_finished_shown, before_startdate_shown , collectlist, namen,show_percent_bar , enddate_color ,get_collect ) VALUES (".
+			"(id, is_online, are_finished_shown, before_startdate_shown , collectlist, namen,show_percent_bar , enddate_color ,get_collect,status_position ) VALUES (".
 			$ilDB->quote($this->getId(), "integer").",".
 			$ilDB->quote(0, "integer").",".
 			$ilDB->quote(0, "integer").",".
@@ -61,7 +61,8 @@ class ilObjTodolists extends ilObjectPlugin
 			$ilDB->quote($this->getTitle(), "text"). ",".
 			$ilDB->quote(1, "integer"). ",".
 			$ilDB->quote("FF0000", "text"). ",".
-			$ilDB->quote('', "text").
+			$ilDB->quote('', "text").",".
+			$ilDB->quote(0, "integer").
 			")");
 	}
 	
@@ -92,6 +93,7 @@ class ilObjTodolists extends ilObjectPlugin
 			$this->setEnddateCursive($rec["enddate_cursive"]);
 			$this->setEnddateFat($rec["enddate_fat"]);
 			$this->setEnddateColor($rec["enddate_color"]);
+			$this->setStatusPosition($rec["status_position"]);
 		}
 	}
 	
@@ -118,6 +120,7 @@ class ilObjTodolists extends ilObjectPlugin
 			" enddate_cursive = ".$ilDB->quote($this->getEnddateCursive(), "integer").",".
 			" enddate_fat = ".$ilDB->quote($this->getEnddateFat(), "integer").",".
 			" enddate_color = ".$ilDB->quote($this->getEnddateColor(), "text").",".
+			" status_position = ".$ilDB->quote($this->getStatusPosition(), "integer").",".
 			" get_collect = ".$ilDB->quote($this->getCollectlistid(), "text").
 			" WHERE id = ".$ilDB->quote($this->getId(), "integer")
 			);
@@ -166,11 +169,20 @@ class ilObjTodolists extends ilObjectPlugin
 		$new_obj->setShowCreatedBy($this->getShowCreatedBy());
 		$new_obj->setShowStartDate($this->getShowStartDate());
 		$new_obj->setShowUpdatedBy($this->getShowUpdatedBy());
-
-
+		$new_obj->setStatusPosition($this->getStatusPosition());
 		$new_obj->update();
 	}
 
+	
+	function setStatusPosition($a_value)
+	{
+		$this->statusPosition=$a_value;
+	}
+	function getStatusPosition()
+	{
+		return $this->statusPosition;
+	}
+	
 	function setMilestones($object_id)
 	{
 		global $ilDB,$ilUser;

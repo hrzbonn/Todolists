@@ -22,7 +22,7 @@ class ilMilestoneTaskListGUI extends ilTaskListGUI
         $path='/Customizing/global/plugins/Services/Repository/RepositoryObject/Todolists';
         $this->mytablegui= new ilMyTableGUI($this,"showContent",$path,'table3','Todolists',$table_id);
         $this->mytablegui->setTableTitle($table_title);
-
+        $this->setHeigthAndWidth("100%");
 
         $this->mytablegui->setIsCalledByClass('ilObjTodolistsGUI');
         $this->mytablegui->setFilterCommand("applyMilestoneFilter");        // parent GUI class must implement this function
@@ -35,14 +35,14 @@ class ilMilestoneTaskListGUI extends ilTaskListGUI
         }
 
         $columns = array();
-
+        if(!$this->isStatusPosition())array_push($columns,$this->mytablegui->defineColumn($column_names[7],'edit_status',$table_id.'_edit_status',3,'boolean',true,$optionen));
         array_push($columns,$this->mytablegui->defineColumn($column_names[0],'tasks',$table_id.'_tasks',30,'text',true) );
         if($this->isShowStartdate())	array_push($columns,$this->mytablegui->defineColumn($column_names[1],'startdate',$table_id.'_startdate',10,'date',true));
         array_push($columns,$this->mytablegui->defineColumn($column_names[2],'enddate',$table_id.'_enddate',10,'date',true));
         array_push($columns,$this->mytablegui->defineColumn($column_names[3],'description',$table_id.'_description',30+$this->addAtDescriptionWidth(),'text',true));
         if($this->isShowCreatedby())	array_push($columns,$this->mytablegui->defineColumn($column_names[4],'created_by',$table_id.'_created_by',4,'text',true));
         if($this->isShowUpdatedby())	array_push($columns,$this->mytablegui->defineColumn($column_names[5],'updated_by',$table_id.'_updated_by',3,'text',true));
-        array_push($columns,$this->mytablegui->defineColumn($column_names[7],'edit_status',$table_id.'_edit_status',3,'boolean',true,$optionen));
+        if($this->isStatusPosition())array_push($columns,$this->mytablegui->defineColumn($column_names[7],'edit_status',$table_id.'_edit_status',3,'boolean',true,$optionen));
         if($this->isEditStatusButtonShown()) array_push($columns,$this->mytablegui->defineColumn($column_names[8],'id','',10,'text',false));
 
 
@@ -291,13 +291,17 @@ class ilMilestoneTaskListGUI extends ilTaskListGUI
     {
         global $ilDB;
         $allData=array();
+        global $ilDB;
+        $allData=array();
+
         if($sql_string != '') {
-            
+
+
             $result = $ilDB->query($sql_string);
             while ($record = $ilDB->fetchAssoc($result)) {
 
 
-                $enddate_time_stamp = strtotime($record['enddate']);
+                $enddate_time_stamp = strtotime( $record['enddate'] );
 
                 $record['enddate'] = $this->formatDate($record['enddate']);
 
@@ -312,7 +316,7 @@ class ilMilestoneTaskListGUI extends ilTaskListGUI
                 $edit_status = $record['edit_status'];
                 $record['edit_status'] = $this->getWorkStatus($record['edit_status'], $record['id']);
 
-
+                $record=$this->preDataSorted($record,$edit_status);
                 $sorted_record=$this->getDataSorted($record,$edit_status);
                 array_push($allData, $sorted_record);
             }
@@ -329,23 +333,21 @@ class ilMilestoneTaskListGUI extends ilTaskListGUI
 
     protected function getDataSorted($record,$edit_status)
     {
+
         global $ilUser;
         $sorted_record = array();
         foreach ($record as $key => $value) {
-            if ($key == "edit_status") {
-                $sorted_record[$key] = $value;
-            }
-            if ($key == "id") {
-                if ($this->isEditStatusButtonShown()) $sorted_record['fertig'] = $this->setChangeButton($value, $edit_status);
-                $sorted_record[$key] = $value;
-            }
-            if($key == "created_by" OR $key == "updated_by")
+
+            switch ($key)
             {
-                $sorted_record[$key] = $ilUser->getLoginByUserId($value);
+                case "tasks":
+                    if(!$this->isStatusPosition() AND $this->isEditStatusButtonShown())$sorted_record["fertig"]=$record["fertig"];
+                    $sorted_record[$key] = $value;
+                    break;
+                default:
+                    $sorted_record[$key] = $value;
             }
-            if ($key != "id" AND $key != "edit_status" AND $key != "created_by" AND $key != "updated_by") {
-                $sorted_record[$key] = $value;
-            }
+
         }
         return $sorted_record;
     }

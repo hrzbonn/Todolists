@@ -223,6 +223,17 @@ $ilDB->query($Sql_string);
 
 
 ?>
+<#6>
+<?php
+
+$Sql_string="ALTER TABLE `rep_robj_xtdo_tasks` CHANGE `description` `description` LONGTEXT CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL ";
+$ilDB->query($Sql_string);
+$Sql_string="ALTER TABLE `rep_robj_xtdo_milsto` CHANGE `description` `description` LONGTEXT CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL ";
+$ilDB->query($Sql_string);
+$Sql_string="ALTER TABLE rep_robj_xtdo_data ADD status_position INT DEFAULT 0";
+$ilDB->query($Sql_string);
+
+?>
 
 
 

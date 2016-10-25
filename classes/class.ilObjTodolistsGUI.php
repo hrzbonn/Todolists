@@ -124,6 +124,7 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 			case "changestatus":
 			case "addtaskall":
 			case "addtoalllist":
+			case "first_plugin_start":
 				$this->checkPermission("read");
 				$this->$cmd();
 				break;
@@ -143,8 +144,15 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 	*/
 	function getStandardCmd()
 	{
-		return "showContent";
+		return "first_plugin_start";
 	}
+
+	function first_plugin_start()
+	{
+		global $ilCtrl;
+		$ilCtrl->redirect($this, "showContent");
+	}
+
 
 //----------------------------------------------------------------------------------------------------------------------
 
@@ -394,7 +402,7 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 
 	function initEditRowForm($id)
 	{
-		global $ilCtrl,$lng;
+		global $ilCtrl,$lng,$ilSetting;
 
 		include_once("Services/Form/classes/class.ilPropertyFormGUI.php");
 		$this->form = new ilPropertyFormGUI();
@@ -410,10 +418,10 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 		$this->form->addItem($ti);
 
 		$ti = new ilDateTimeInputGUI($this->txt("startdate"),'startdate');
-		$ti->setMode(ilDateTimeInputGUI::MODE_INPUT);
+		if($this->versionBigger52()) $ti->setMode(ilDateTimeInputGUI::MODE_INPUT);
 		$this->form->addItem($ti);
 		$ti = new ilDateTimeInputGUI($this->txt("enddate"),'enddate');
-		$ti->setMode(ilDateTimeInputGUI::MODE_INPUT);
+		if($this->versionBigger52()) $ti->setMode(ilDateTimeInputGUI::MODE_INPUT);
 		$this->form->addItem($ti);
 
 		$ti = new ilTextAreaInputGUI($this->txt("description"), "description");
@@ -456,7 +464,7 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 
 	function getEditRowValues($id)
 	{
-		global $ilDB;
+		global $ilDB,$ilSetting;
 		$result = $ilDB->query("SELECT tasks,startdate,enddate,description,milestone_id FROM rep_robj_xtdo_tasks WHERE id = ". $ilDB->quote($id,"integer"));
 		while ($record = $ilDB->fetchAssoc($result))
 		{
@@ -470,14 +478,26 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 			$id_in_array=array_search($name,$optionen);
 
 			$values['todo']=$record['tasks'];
-			if($record['startdate'])
+			if($record['startdate'] AND $this->versionBigger52())
 			{
 				$startdate["date"] = date("d.m.Y", strtotime($record['startdate']));
 			}
-			if($record['enddate'])
+			if($record['enddate'] AND $this->versionBigger52())
 			{
 				$enddate["date"]=date("d.m.Y",strtotime($record['enddate']));
 			}
+
+			if($record['startdate'] AND $this->versionBigger52())
+			{
+				$startdate = date("d.m.Y", strtotime($record['startdate']));
+			}
+			if($record['enddate'] AND $this->versionBigger52())
+			{
+				$enddate=date("d.m.Y",strtotime($record['enddate']));
+			}
+
+
+
 			$values['description']=$record['description'];
 			$values['milestone_task']=$id_in_array;
 		}
@@ -489,29 +509,47 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 
 	function getEditRowFromForm()
 	{
-		global $lng,$ilCtrl;
+		global $lng,$ilCtrl,$ilSetting;
 		$this->inittodosForm();
+
 		if ($this->form->checkInput())
 		{
-			$startdate_array=$this->form->getInput("startdate");
-			$enddate_array=$this->form->getInput("enddate");
 
-
-			if(strtotime($startdate_array['date']) <= strtotime($enddate_array['date']) OR $enddate_array['date']== "" )
+			if($this->versionBigger52())
 			{
-				$values['task']=$this->form->getInput("todo");
-				$values['startdate'] = $startdate_array['date'];
-				$values['enddate'] = $enddate_array['date'];
-				$values['description'] = $this->form->getInput("description");
-				$values['milestone_task'] = $this->form->getInput("milestone_task");
-				ilUtil::sendSuccess($lng->txt("msg_obj_modified"), true);
-				return $values;
+				$startdate_array = $this->form->getInput("startdate");
+				$enddate_array = $this->form->getInput("enddate");
+
+				if (strtotime($startdate_array['date']) <= strtotime($enddate_array['date']) OR $enddate_array['date'] == "") {
+					$values['task']=$this->form->getInput("todo");
+					$values['startdate'] = $startdate_array['date'];
+					$values['enddate'] = $enddate_array['date'];
+					$values['description'] = $this->form->getInput("description");
+					$values['milestone_task'] = $this->form->getInput("milestone_task");
+					ilUtil::sendSuccess($lng->txt("msg_obj_modified"), true);
+				} else {
+					ilUtil::sendFailure($lng->txt("form_input_not_valid"),true);
+					$ilCtrl->setParameterByClass("ilObjTodolistsGUI", "data_id",$_GET['data_id']);
+					$ilCtrl->redirect($this, "edit_row");
+				}
 			}else
 			{
-				ilUtil::sendFailure($lng->txt("form_input_not_valid"),true);
-				$ilCtrl->setParameterByClass("ilObjTodolistsGUI", "data_id",$_GET['data_id']);
-				$ilCtrl->redirect($this, "edit_row");
+				$startdate_array = $this->form->getInput("startdate");
+				$enddate_array = $this->form->getInput("enddate");
+				if (strtotime($startdate_array) <= strtotime($enddate_array) OR $enddate_array == "") {
+					$values['task'] = $this->form->getInput("todo");
+					$values['milestone_task'] = $this->form->getInput("milestone_task");
+					$values['startdate'] = $startdate_array;
+					$values['enddate'] = $enddate_array;
+					$values['description'] = $this->form->getInput("description");
+					ilUtil::sendSuccess($lng->txt("msg_obj_modified"), true);
+				} else {
+					ilUtil::sendFailure($lng->txt("form_input_not_valid"),true);
+					$ilCtrl->setParameterByClass("ilObjTodolistsGUI", "data_id",$_GET['data_id']);
+					$ilCtrl->redirect($this, "edit_row");
+				}
 			}
+			return $values;
 		}else
 		{
 			ilUtil::sendFailure($lng->txt("form_input_not_valid"),true);
@@ -732,8 +770,6 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 		$ti->setRequired(true);
 		$this->form->addItem($ti);
 
-
-
 		// description
 		$ta = new ilTextAreaInputGUI($this->txt("description"), "desc");
 		$this->form->addItem($ta);
@@ -741,10 +777,8 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 		// online
 		$cb = new ilCheckboxInputGUI($this->lng->txt("online"), "online");
 		$this->form->addItem($cb);
-
-
-
-
+		//------------------------------------------
+		//Spezielle nicht-Collectlist Einstellungen
 
 
 		if(!$this->is_collectlist())
@@ -757,8 +791,6 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 			$ti->setInfo($this->txt("collectlist_info"));
 			$this->form->addItem($ti);
 		}
-
-
 
 
 		//------------------------------------------
@@ -780,15 +812,6 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 		$ti = new ilCheckboxInputGUI($this->txt("percent_line_option"), "percent_bar");
 		$ti->setInfo($this->txt("percent_line_option_info"));
 		$this->form->addItem($ti);
-
-		$ti = new ilCheckboxInputGUI($this->txt("edit_status_checkbox"), "edit_status_checkbox");
-		$ti->setInfo($this->txt("edit_status_checkbox_info"));
-		$this->form->addItem($ti);
-
-		$ti = new ilCheckboxInputGUI($this->txt("edit_status_permission"), "edit_status_permission");
-		$ti->setInfo($this->txt("edit_status_permission_info"));
-		$this->form->addItem($ti);
-
 		//------------------------------------------
 		//Felder Einstellungen
 
@@ -828,6 +851,23 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 		$ti= new ilColorPickerInputGUI($this->txt('enddate_color'),'enddate_color');
 		$ti->setInfo($this->txt("enddate_color_info"));
 		$this->form->addItem($ti);
+		//------------------------------------------
+		//Status Einstellungen
+		$section = new ilFormSectionHeaderGUI();
+		$section->setTitle($this->txt('edit_status_props'));
+		$this->form->addItem($section);
+
+		$ti = new ilCheckboxInputGUI($this->txt("edit_status_checkbox"), "edit_status_checkbox");
+		$ti->setInfo($this->txt("edit_status_checkbox_info"));
+		$this->form->addItem($ti);
+
+		$ti = new ilCheckboxInputGUI($this->txt("edit_status_permission"), "edit_status_permission");
+		$ti->setInfo($this->txt("edit_status_permission_info"));
+		$this->form->addItem($ti);
+
+		$ti = new ilCheckboxInputGUI($this->txt("edit_status_position"), "edit_status_position");
+		$ti->setInfo($this->txt("edit_status_position_info"));
+		$this->form->addItem($ti);
 
 	}
 
@@ -849,6 +889,7 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 		$values["enddate_cursive"] = $this->object->getEnddateCursive();
 		$values["enddate_fat"] = $this->object->getEnddateFat();
 		$values["enddate_color"] = $this->object->getEnddateColor();
+		$values["edit_status_position"]=$this->object->getStatusPosition();
 
 		$this->form->setValuesByArray($values);
 
@@ -912,6 +953,7 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 			$this->object->setShowHidePercentBarOption($this->form->getInput("percent_bar"));
 			$this->object->setShowEditStatusButton($this->form->getInput("edit_status_checkbox"));
 			$this->object->setEditStatusPermission($this->form->getInput("edit_status_permission"));
+			$this->object->setStatusPosition($this->form->getInput("edit_status_position"));
 			if($is_okay) {
 				$this->object->update();
 				ilUtil::sendSuccess($lng->txt("msg_obj_modified"), true);
@@ -951,7 +993,7 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 	
 	public function inittodosForm()
 	{
-		global $ilCtrl;
+		global $ilCtrl,$ilSetting;
 
 		include_once("Services/Form/classes/class.ilPropertyFormGUI.php");
 		$this->form = new ilPropertyFormGUI();
@@ -976,10 +1018,10 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
             $ti->setOptions($optionen);
 			$this->form->addItem($ti);
 			$ti = new ilDateTimeInputGUI($this->txt("startdate"),'startdate');
-			$ti->setMode(ilDateTimeInputGUI::MODE_INPUT);
+			if($this->versionBigger52())  $ti->setMode(ilDateTimeInputGUI::MODE_INPUT);
 			$this->form->addItem($ti);
 			$ti = new ilDateTimeInputGUI($this->txt("enddate"),'enddate');
-			$ti->setMode(ilDateTimeInputGUI::MODE_INPUT);
+			if($this->versionBigger52()) $ti->setMode(ilDateTimeInputGUI::MODE_INPUT);
 			$this->form->addItem($ti);
 			$ti = new ilTextAreaInputGUI($this->txt("description"), "description");
 			$this->form->addItem($ti);
@@ -996,27 +1038,53 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 
 	}
 
+
+	function versionBigger52()
+	{
+		//prüfe ob Version größer 51 wenn nicht gibt true zurück um alte Funktionen aufzurufen
+		global $ilSetting;
+		if(strpos($ilSetting->get("ilias_version"),"2.0") == false)
+		{
+			return true;
+		}
+		else return false;
+	}
+
 	function getTodosValues()
 	{
-		global $lng;
+		global $lng,$ilSetting;
 		$this->inittodosForm();
 		if ($this->form->checkInput())
 		{
-
-			$startdate_array=$this->form->getInput("startdate");
-			$enddate_array=$this->form->getInput("enddate");
-
-			if(strtotime($startdate_array['date']) <= strtotime($enddate_array['date']) OR $enddate_array['date']== "" )
+			if($this->versionBigger52())
 			{
-				$values['task'] = $this->form->getInput("todo");
-				$values['milestone_task']=$this->form->getInput("milestone_task");
-				$values['startdate'] = $startdate_array['date'];
-				$values['enddate'] = $enddate_array['date'];
-				$values['description'] = $this->form->getInput("description");
-				ilUtil::sendSuccess($lng->txt("msg_obj_modified"), true);
+					$startdate_array = $this->form->getInput("startdate");
+					$enddate_array = $this->form->getInput("enddate");
+
+					if (strtotime($startdate_array['date']) <= strtotime($enddate_array['date']) OR $enddate_array['date'] == "") {
+						$values['task'] = $this->form->getInput("todo");
+						$values['milestone_task'] = $this->form->getInput("milestone_task");
+						$values['startdate'] = $startdate_array['date'];
+						$values['enddate'] = $enddate_array['date'];
+						$values['description'] = $this->form->getInput("description");
+						ilUtil::sendSuccess($lng->txt("msg_obj_modified"), true);
+					} else {
+						ilUtil::sendFailure($lng->txt("form_input_not_valid"), true);
+					}
 			}else
 			{
-				ilUtil::sendFailure($lng->txt("form_input_not_valid"),true);
+					$startdate_array = $this->form->getInput("startdate");
+					$enddate_array = $this->form->getInput("enddate");
+					if (strtotime($startdate_array) <= strtotime($enddate_array) OR $enddate_array == "") {
+						$values['task'] = $this->form->getInput("todo");
+						$values['milestone_task'] = $this->form->getInput("milestone_task");
+						$values['startdate'] = $startdate_array;
+						$values['enddate'] = $enddate_array;
+						$values['description'] = $this->form->getInput("description");
+						ilUtil::sendSuccess($lng->txt("msg_obj_modified"), true);
+					} else {
+						ilUtil::sendFailure($lng->txt("form_input_not_valid"), true);
+					}
 			}
 		}
 		return $values;
@@ -1375,7 +1443,7 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 		$height = '20px';
 
 		$image = '<img src="Customizing/global/plugins/Services/Repository/RepositoryObject/Todolists/templates/images/green_v1.png" height="' . $height . '" width="' . $width_green . '">';
-		$image = $image . '<img src="Customizing/global/plugins/Services/Repository/RepositoryObject/Todolists/templates/images/red_v1.png" height="' . $height . '" width="' . $width_red . '">';
+		$image = $image . '<img src="Customizing/global/plugins/Services/Repository/RepositoryObject/Todolists/templates/images/orange_v1.png" height="' . $height . '" width="' . $width_red . '">';
 		$text = ' ' . $fertig_percent . '% ' . $this->txt('percentbar_text');
 		return $image . $text;
 	}
@@ -1456,6 +1524,9 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 		include_once("Services/Form/classes/class.ilPropertyFormGUI.php");
 		global $tpl, $ilTabs,$ilAccess;
 		$ilTabs->activateTab("content");
+
+
+
 
 		$html_content='';
 

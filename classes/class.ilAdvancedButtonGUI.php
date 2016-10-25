@@ -770,7 +770,7 @@ class ilAdvancedButtonGUI
 
 		if ($this->getHeaderIcon() != ilAdvancedSelectionListGUI::NO_ICON)
 		{
-			$tpl->setCurrentBlock("top_img");
+			//$tpl->setCurrentBlock("top_img");
 			switch ($this->getHeaderIcon())
 			{
 				case ilAdvancedSelectionListGUI::ICON_CONFIG:
