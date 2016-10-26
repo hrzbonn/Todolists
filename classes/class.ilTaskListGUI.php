@@ -31,6 +31,7 @@ class ilTaskListGUI
         $this->taskListRefId=$ref_id;
         $this->table_gui = new ilMyTableGUI($this, "showContent",'/Customizing/global/plugins/Services/Repository/RepositoryObject/Todolists','table3','Todolists','Tasklist');
         $this->table_gui->setTableTitle($listnname);
+        $this->setMoreCounter(0);
 
         if ($ilAccess->checkAccess("edit_content", "",$ref_id ))
         {
@@ -42,26 +43,25 @@ class ilTaskListGUI
         $this->table_gui->setResetCommand("resetFilter");
 
         $columns = array();
-        $add_at_description=$this->addAtDescriptionWidth();
+        $width=$this->getWidth();
+        $description_width=$this->getDescriptionWidth();
+        $width=$this->correctWidth($width,$description_width);
 
         if(!$this->isStatusPosition())   array_push($columns,$this->table_gui->defineColumn($column_name_array[7],'edit_status','edit_status',3,'boolean',true,$optionen));
-        if($this->isEditStatusButtonShown() AND !$this->isStatusPosition()) array_push($columns,$this->table_gui->defineColumn($column_name_array[8],'id','',10,'text',false));
-        array_push($columns,$this->table_gui->defineColumn($column_name_array[0],'tasks','tasks',30,'text',true) );
-        if($this->isShowStartdate())	array_push($columns,$this->table_gui->defineColumn($column_name_array[1],'startdate','startdate',10,'date',true));
-        array_push($columns,$this->table_gui->defineColumn($column_name_array[2],'enddate','enddate',10,'date',true));
-        array_push($columns,$this->table_gui->defineColumn($column_name_array[3],'description','description',30+$add_at_description,'text',true));
-        if($this->isShowCreatedby())	array_push($columns,$this->table_gui->defineColumn($column_name_array[4],'created_by','created_by',4,'text',true));
-        if($this->isShowUpdatedby())	array_push($columns,$this->table_gui->defineColumn($column_name_array[5],'updated_by','updated_by',3,'text',true));
-        if($this->isCollectlist())		array_push($columns,$this->table_gui->defineColumn($column_name_array[6],'','attechedto',10,'text',true));
-        if($this->isStatusPosition())   array_push($columns,$this->table_gui->defineColumn($column_name_array[7],'edit_status','edit_status',3,'boolean',true,$optionen));
-        if($this->isEditStatusButtonShown() AND $this->isStatusPosition()) array_push($columns,$this->table_gui->defineColumn($column_name_array[8],'id','',10,'text',false));
+        if($this->isEditStatusButtonShown() AND !$this->isStatusPosition()) array_push($columns,$this->table_gui->defineColumn($column_name_array[8],'id','',$width,'text',false));
+        array_push($columns,$this->table_gui->defineColumn($column_name_array[0],'tasks','tasks',$width,'text',true) );
+        if($this->isShowStartdate())	array_push($columns,$this->table_gui->defineColumn($column_name_array[1],'startdate','startdate',$width,'date',true));
+        if($this->isEnddateShown())array_push($columns,$this->table_gui->defineColumn($column_name_array[2],'enddate','enddate',$width,'date',true));
+        if($this->isDescriptionShown())array_push($columns,$this->table_gui->defineColumn($column_name_array[3],'description','description',$description_width,'text',true));
+        if($this->isShowCreatedby())	array_push($columns,$this->table_gui->defineColumn($column_name_array[4],'created_by','created_by',$width,'text',true));
+        if($this->isShowUpdatedby())	array_push($columns,$this->table_gui->defineColumn($column_name_array[5],'updated_by','updated_by',$width,'text',true));
+        if($this->isCollectlist())		array_push($columns,$this->table_gui->defineColumn($column_name_array[6],'','attechedto',$width,'text',true));
+        if($this->isStatusPosition())   array_push($columns,$this->table_gui->defineColumn($column_name_array[7],'edit_status','edit_status',$width,'boolean',true,$optionen));
+        if($this->isEditStatusButtonShown() AND $this->isStatusPosition()) array_push($columns,$this->table_gui->defineColumn($column_name_array[8],'id','',$width,'text',false));
 
         $this->columns=$columns;
         $this->table_gui->setColumns($columns);
-
         
-        
-
         
         if($this->isBeforeStartDateShown())
         {
@@ -77,16 +77,40 @@ class ilTaskListGUI
         $this->table_gui->resetOffset();
     }
 
-
-    protected function addAtDescriptionWidth()
+    protected function correctWidth($width,$description_width)
     {
-        $add_at_description=0;
-        if(!$this->isShowStartdate())$add_at_description=$add_at_description+10;
-        if(!$this->isShowCreatedby())$add_at_description=$add_at_description+4;
-        if(!$this->isShowUpdatedby())$add_at_description=$add_at_description+3;
-        if(!$this->isCollectlist())$add_at_description=$add_at_description+10;
+        if($description_width==0)return $width;
 
-        return $add_at_description;
+        $columnnumber=1;
+        if($this->isShowStartdate())$columnnumber++;
+        if($this->isShowCreatedby())$columnnumber++;
+        if($this->isShowUpdatedby())$columnnumber++;
+        if($this->isCollectlist())$columnnumber++;
+        if($this->isEditStatusButtonShown())$columnnumber++;
+        if($this->isEnddateShown())$columnnumber++;
+
+        return (97-$description_width)/$columnnumber;
+
+    }
+
+    protected function getDescriptionWidth()
+    {
+        if(!$this->isDescriptionShown())return 0;
+        return 97/2;
+    }
+
+    protected function getWidth()
+    {
+        $columnnumber=1;
+        if($this->isShowStartdate())$columnnumber++;
+        if($this->isShowCreatedby())$columnnumber++;
+        if($this->isShowUpdatedby())$columnnumber++;
+        if($this->isCollectlist())$columnnumber++;
+        if($this->isEditStatusButtonShown())$columnnumber++;
+        if($this->isEnddateShown())$columnnumber++;
+        if($this->isDescriptionShown())$columnnumber++;
+
+        return 97/$columnnumber;
     }
     
     public function setHeigthAndWidth($heigthAndWidth)
@@ -104,6 +128,15 @@ class ilTaskListGUI
             $wert=$record[$database_name];
         }
         return $wert;
+    }
+
+    protected function isDescriptionShown()
+    {
+        return $this->SqlSelectQueryOneValue('show_description');
+    }
+    protected function isEnddateShown()
+    {
+        return $this->SqlSelectQueryOneValue('show_enddate');
     }
 
     protected function isStatusPosition()
@@ -438,7 +471,15 @@ class ilTaskListGUI
         else return "";
     }
 
-    function preDataSorted($record,$edit_status)
+    function setMoreCounter($a_value)
+    {
+        $this->moreCounter=$a_value;
+    }
+    function getMoreCounter()
+    {
+        return $this->moreCounter;
+    }
+    function preDataSorted($record,$edit_status,$table_id)
     {
         global $ilUser;
         $sorted_record = array();
@@ -458,7 +499,7 @@ class ilTaskListGUI
                     if ($this->isCollectlist())$sorted_record["attechedto"]=$this->getWorklistLinkForCollectlist($value);
                     break;
                 case "description":
-                    if(strlen($record[$key]) > 100)
+                    /*if(strlen($record[$key]) > 100 AND false)
                     {
                         $more="<a>...weiter lesen.</a>";
 
@@ -481,7 +522,7 @@ class ilTaskListGUI
                             {
                                 display: none;
                             }
-                            .more:hover .all 
+                            .more:hover .all
                             {
                                 display: inline;
                             }
@@ -492,9 +533,38 @@ class ilTaskListGUI
                         </style>";
 
                         $string=$css.$div;
-                    }
+                        $sorted_record[$key]=$string;
+                    }*/
+                    if(strlen($record[$key]) > 100)
+                    {
 
-                    $sorted_record[$key]=$string;
+
+
+                        $pos = strripos($record[$key]," ");
+                        if($pos==false)$pos=100;
+                        $string=substr($record[$key],0,100);
+                        $pos = strripos($string," ");
+                        if($pos==false)$pos=100;
+                        $string=substr($record[$key],0,$pos+1);
+                        $link_mehr='<a onClick="changeMehr(\'all_'.$table_id.$this->getMoreCounter().'\',\'weniger_'.$table_id.$this->getMoreCounter().'\')">...weiter lesen.</a>';
+                        $link_weniger='<a onClick="changeWeniger(\'all_'.$table_id.$this->getMoreCounter().'\',\'weniger_'.$table_id.$this->getMoreCounter().'\')"> ...zuklappen.</a>';
+                        $string=$string.$link_mehr;
+                        $div="<div id = 'more_".$table_id.$this->getMoreCounter()."'>
+                                <div id = 'weniger_".$table_id.$this->getMoreCounter()."'>".$string."</div>
+                                <div id = 'all_".$table_id.$this->getMoreCounter()."'>".$record[$key].$link_weniger."</div>
+                              </div>";
+                        $css="<style>
+                            #all_".$table_id.$this->getMoreCounter()."
+                            {
+                                display: none;
+                            }
+                        </style>";
+                        $string=$css.$div;
+                        $sorted_record[$key]=$string;
+                        $counter=$this->getMoreCounter();
+                        $this->setMoreCounter($counter+1);
+                    }
+                    else $sorted_record[$key] = $value;
                     break;
                 default:
                     $sorted_record[$key] = $value;
@@ -518,22 +588,25 @@ class ilTaskListGUI
             while ($record = $ilDB->fetchAssoc($result)) {
 
 
-                $enddate_time_stamp = strtotime( $record['enddate'] );
-
-                $record['enddate'] = $this->formatDate($record['enddate']);
+                if (isset($record['enddate']))
+                {
+                    $enddate_time_stamp = strtotime( $record['enddate'] );
+                    $record['enddate'] = $this->formatDate($record['enddate']);
+                    if ($this->getEnddateWarning() AND $enddate_time_stamp < time()) {
+                        $record['enddate'] = $this->changeDate($record['enddate']);
+                    }
+                }
 
                 if (isset($record['startdate'])) {
                     $record['startdate'] = $this->formatDate($record['startdate']);
                 }
 
-                if ($this->getEnddateWarning() AND $enddate_time_stamp < time()) {
-                    $record['enddate'] = $this->changeDate($record['enddate']);
-                }
+
 
                 $edit_status = $record['edit_status'];
                 $record['edit_status'] = $this->getWorkStatus($record['edit_status'], $record['id']);
 
-                $record=$this->preDataSorted($record,$edit_status);
+                $record=$this->preDataSorted($record,$edit_status,"Tasklist");
                 $sorted_record=$this->getDataSorted($record,$edit_status);
                 array_push($allData, $sorted_record);
              }

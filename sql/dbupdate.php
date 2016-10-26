@@ -234,7 +234,15 @@ $Sql_string="ALTER TABLE rep_robj_xtdo_data ADD status_position INT DEFAULT 0";
 $ilDB->query($Sql_string);
 
 ?>
+<#7>
+<?php
 
+$Sql_string="ALTER TABLE rep_robj_xtdo_data ADD show_description INT DEFAULT 1";
+$ilDB->query($Sql_string);
+$Sql_string="ALTER TABLE rep_robj_xtdo_data ADD show_enddate INT DEFAULT 1";
+$ilDB->query($Sql_string);
+
+?>
 
 
 

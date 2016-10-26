@@ -126,20 +126,24 @@ startdate_before#:#Show not reached start date
 
 datebefor#:#The start date is not located before the end date!
 
-milestone#:#milostone
+milestone#:#milestone
 progress#:#progress
-new_milestone#:#new milestone
-newmilestone#:#Add milostone
-addmilestoneall#:#Allen Listen hinzufügen
+new_milestone#:#New milestone
+newmilestone#:#Add milestone
+addmilestoneall#:#Add all lists
 milestone_task#:#Assign milestone
 nothing#:#nothing
 doublemilestone#:#The milestone does already exist! Please try again.
 percentbar_text#:#der Hauptaufgabenliste sind bereits abgearbeitet
 new_task_all#:#Neue Aufgabe allen hinzufügen
 really_add#:#Are you sure that you want to add the task to all lists!
-choosemilestone#:#Hier können sie den Meilensteinen der Listen, diese Aufgabe zuweisen.
-
+choosemilestone#:#Here you can assign the task to the milestones of the list.
 
 edit_status_props#:#Status settings
 edit_status_position#:#Status position
 edit_status_position_info#:#If the option is activated the status next to the actionbutton will be shown.
+
+show_description#:#Show description
+show_description_info#:#Activates a column in the table where the description of the task is being shown.
+show_enddate#:#Show end date
+show_enddate_info#:#Activates a column in the table where the end date of the task is being shown.

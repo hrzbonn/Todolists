@@ -94,6 +94,8 @@ class ilObjTodolists extends ilObjectPlugin
 			$this->setEnddateFat($rec["enddate_fat"]);
 			$this->setEnddateColor($rec["enddate_color"]);
 			$this->setStatusPosition($rec["status_position"]);
+			$this->setShowDescription($rec["show_description"]);
+			$this->setShowEnddate($rec["show_enddate"]);
 		}
 	}
 	
@@ -120,6 +122,8 @@ class ilObjTodolists extends ilObjectPlugin
 			" enddate_cursive = ".$ilDB->quote($this->getEnddateCursive(), "integer").",".
 			" enddate_fat = ".$ilDB->quote($this->getEnddateFat(), "integer").",".
 			" enddate_color = ".$ilDB->quote($this->getEnddateColor(), "text").",".
+			" show_description = ".$ilDB->quote($this->getShowDescription(), "integer").",".
+			" show_enddate = ".$ilDB->quote($this->getShowEnddate(), "integer").",".			
 			" status_position = ".$ilDB->quote($this->getStatusPosition(), "integer").",".
 			" get_collect = ".$ilDB->quote($this->getCollectlistid(), "text").
 			" WHERE id = ".$ilDB->quote($this->getId(), "integer")
@@ -170,10 +174,29 @@ class ilObjTodolists extends ilObjectPlugin
 		$new_obj->setShowStartDate($this->getShowStartDate());
 		$new_obj->setShowUpdatedBy($this->getShowUpdatedBy());
 		$new_obj->setStatusPosition($this->getStatusPosition());
+		$new_obj->setShowDescription($this->getShowDescription());
+		$new_obj->setShowEnddate($this->getShowEnddate());
 		$new_obj->update();
 	}
 
-	
+
+	function setShowDescription($a_value)
+	{
+		$this->ShowDescription=$a_value;
+	}
+	function getShowDescription()
+	{
+		return $this->ShowDescription;
+	}
+	function setShowEnddate($a_value)
+	{
+		$this->ShowEnddate=$a_value;
+	}
+	function getShowEnddate()
+	{
+		return $this->ShowEnddate;
+	}
+
 	function setStatusPosition($a_value)
 	{
 		$this->statusPosition=$a_value;

@@ -487,11 +487,11 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 				$enddate["date"]=date("d.m.Y",strtotime($record['enddate']));
 			}
 
-			if($record['startdate'] AND $this->versionBigger52())
+			if($record['startdate'] AND !$this->versionBigger52())
 			{
 				$startdate = date("d.m.Y", strtotime($record['startdate']));
 			}
-			if($record['enddate'] AND $this->versionBigger52())
+			if($record['enddate'] AND !$this->versionBigger52())
 			{
 				$enddate=date("d.m.Y",strtotime($record['enddate']));
 			}
@@ -828,6 +828,12 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 		$ti = new ilCheckboxInputGUI($this->txt('show_startdate'),'showstartdate');
 		$ti->setInfo($this->txt("show_startdate_info"));
 		$this->form->addItem($ti);
+		$ti = new ilCheckboxInputGUI($this->txt('show_description'),'showdescription');
+		$ti->setInfo($this->txt("show_description_info"));
+		$this->form->addItem($ti);
+		$ti = new ilCheckboxInputGUI($this->txt('show_enddate'),'showenddate');
+		$ti->setInfo($this->txt("show_enddate_info"));
+		$this->form->addItem($ti);
 
 
 		//------------------------------------------
@@ -890,6 +896,8 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 		$values["enddate_fat"] = $this->object->getEnddateFat();
 		$values["enddate_color"] = $this->object->getEnddateColor();
 		$values["edit_status_position"]=$this->object->getStatusPosition();
+		$values["showdescription"]=$this->object->getShowDescription();
+		$values["showenddate"]=$this->object->getShowEnddate();
 
 		$this->form->setValuesByArray($values);
 
@@ -949,6 +957,8 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 			$this->object->SetShowCreatedBy($this->form->getInput("showcreatedby"));
 			$this->object->SetShowUpdatedBy($this->form->getInput("showupdatedby"));
 			$this->object->SetShowStartDate($this->form->getInput("showstartdate"));
+			$this->object->SetShowDescription($this->form->getInput("showdescription"));
+			$this->object->SetShowEnddate($this->form->getInput("showenddate"));
 			
 			$this->object->setShowHidePercentBarOption($this->form->getInput("percent_bar"));
 			$this->object->setShowEditStatusButton($this->form->getInput("edit_status_checkbox"));
@@ -1525,7 +1535,16 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 		global $tpl, $ilTabs,$ilAccess;
 		$ilTabs->activateTab("content");
 
-
+		$java_script='<script>
+                        function changeMehr(IDMehr,IdWeniger) {
+                            document.getElementById(IDMehr).style.display= "inline"
+                            document.getElementById(IdWeniger).style.display= "none"
+                        }
+                        function changeWeniger(IDMehr,IdWeniger){
+                            document.getElementById(IDMehr).style.display=  "none"
+                            document.getElementById(IdWeniger).style.display= "inline"
+                        }</script>';
+		echo $java_script;
 
 
 		$html_content='';
@@ -1920,6 +1939,19 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 		$ilTabs->activateTab("milestone");
 		include_once("class.ilMilestoneListGUI.php");
 
+		$java_script='<script>
+                        function changeMehr(IDMehr,IdWeniger) {
+                            document.getElementById(IDMehr).style.display= "inline"
+                            document.getElementById(IdWeniger).style.display= "none"
+                        }
+                        function changeWeniger(IDMehr,IdWeniger){
+                            document.getElementById(IDMehr).style.display=  "none"
+                            document.getElementById(IdWeniger).style.display= "inline"
+                        }</script>';
+		echo $java_script;
+		
+		
+		
 		$columnnames=array($this->txt("milestone"),$this->txt('startdate'),$this->txt('enddate'),$this->txt('description'),$this->txt('createdby'),$this->txt('updatedby'),
 			$this->txt('attached_to'),$this->txt("progress"));
 

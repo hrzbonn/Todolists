@@ -370,7 +370,14 @@ class ilMilestoneListGUI
         }
         return $object_id;
     }
-
+    function setMoreCounter($a_value)
+    {
+        $this->moreCounter=$a_value;
+    }
+    function getMoreCounter()
+    {
+        return $this->moreCounter;
+    }
 
     function addData($data)
     {
@@ -390,7 +397,39 @@ class ilMilestoneListGUI
                 case "milestone":
                     $array[$key]=$value;
                     if($this->isStartdateShown())$array["startdate"]=$this->getStartDate($data["id"]);
-                    $array["enddate"]=$this->getEndDate($data["id"]);
+                    if($this->isEnddateShown())$array["enddate"]=$this->getEndDate($data["id"]);
+                    break;
+                case "description":
+                    if(strlen($data[$key]) > 100)
+                    {
+
+
+
+                        $pos = strripos($data[$key]," ");
+                        if($pos==false)$pos=100;
+                        $string=substr($data[$key],0,100);
+                        $pos = strripos($string," ");
+                        if($pos==false)$pos=100;
+                        $string=substr($data[$key],0,$pos+1);
+                        $link_mehr='<a onClick="changeMehr(\'all_'.$this->getMoreCounter().'\',\'weniger_'.$this->getMoreCounter().'\')">...weiter lesen.</a>';
+                        $link_weniger='<a onClick="changeWeniger(\'all_'.$this->getMoreCounter().'\',\'weniger_'.$this->getMoreCounter().'\')"> ...zuklappen.</a>';
+                        $string=$string.$link_mehr;
+                        $div="<div id = 'more_".$this->getMoreCounter()."'>
+                                <div id = 'weniger_".$this->getMoreCounter()."'>".$string."</div>
+                                <div id = 'all_".$this->getMoreCounter()."'>".$data[$key].$link_weniger."</div>
+                              </div>";
+                        $css="<style>
+                            #all_".$this->getMoreCounter()."
+                            {
+                                display: none;
+                            }
+                        </style>";
+                        $string=$css.$div;
+                        $array[$key]=$string;
+                        $counter=$this->getMoreCounter();
+                        $this->setMoreCounter($counter+1);
+                    }
+                    else $array[$key]=$value;
                     break;
                 case "progress":
 
@@ -592,8 +631,8 @@ class ilMilestoneListGUI
 
         array_push($columns,$this->myTableGui->defineColumn($column_name_array[0],'milestone','milestone_'.$this->getTableId(),30,'text',true) );
         if($this->isStartdateShown())array_push($columns,$this->myTableGui->defineColumn($column_name_array[1],'','startdate_'.$this->getTableId(),10,'date',false));
-        array_push($columns,$this->myTableGui->defineColumn($column_name_array[2],'','enddate_'.$this->getTableId(),10,'date',false));
-        array_push($columns,$this->myTableGui->defineColumn($column_name_array[3],'description','description_'.$this->getTableId(),10+$add_at_description,'text',true));
+        if($this->isEnddateShown())array_push($columns,$this->myTableGui->defineColumn($column_name_array[2],'','enddate_'.$this->getTableId(),10,'date',false));
+        if($this->isDescriptionShown())array_push($columns,$this->myTableGui->defineColumn($column_name_array[3],'description','description_'.$this->getTableId(),10+$add_at_description,'text',true));
         if($this->isCreatedByShown())array_push($columns,$this->myTableGui->defineColumn($column_name_array[4],'created_by','created_by_'.$this->getTableId(),4,'text',true));
         if($this->isUpdatedByShown())array_push($columns,$this->myTableGui->defineColumn($column_name_array[5],'updated_by','updated_by_'.$this->getTableId(),3,'text',true));
         if($this->isCollectlist())array_push($columns,$this->myTableGui->defineColumn($column_name_array[6],'','attechedto_'.$this->getTableId(),10,'text',true));
@@ -613,6 +652,15 @@ class ilMilestoneListGUI
         if(!$this->isCollectlist())$add_at_description=$add_at_description+10;
 
         return $add_at_description;
+    }
+
+    protected function isDescriptionShown()
+    {
+        return $this->SqlSelectQueryOneValue('show_description');
+    }
+    protected function isEnddateShown()
+    {
+        return $this->SqlSelectQueryOneValue('show_enddate');
     }
 
     private function isCollectlist()
