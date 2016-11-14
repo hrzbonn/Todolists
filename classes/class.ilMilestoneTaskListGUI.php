@@ -12,14 +12,16 @@ class ilMilestoneTaskListGUI extends ilTaskListGUI
     private $objid;
     private $milestoneid;
     public $table_id;
+    private $object;
     
-    function __construct($table_id,$table_title,$column_names,$optionen,$ref_id,$object_id)
+    function __construct($table_id,$table_title,$column_names,$optionen,$ref_id,$object_id,$object)
     {
         global $ilAccess;
         $this->table_id=$table_id;
         $this->setObjectId($object_id);
         $this->setTasklistObjectId($object_id);
         $this->setMoreCounter(0);
+        $this->object=$object;
         $path='/Customizing/global/plugins/Services/Repository/RepositoryObject/Todolists';
         $this->mytablegui= new ilMyTableGUI($this,"showContent",$path,'table3','Todolists',$table_id);
         $this->mytablegui->setTableTitle($table_title);
@@ -29,35 +31,37 @@ class ilMilestoneTaskListGUI extends ilTaskListGUI
         $this->mytablegui->setFilterCommand("applyMilestoneFilter");        // parent GUI class must implement this function
         $this->mytablegui->setResetCommand("resetMilestoneFilter");
 
-
         if ($ilAccess->checkAccess("edit_content", "",$ref_id ))
         {
             $this->mytablegui->addActionButton();
         }
 
-
+        $this->setObject($this->object);
         $width=$this->getWidth();
         $description_width=$this->getDescriptionWidth();
         $width=$this->correctWidth($width,$description_width);
 
 
         $columns = array();
-        if(!$this->isStatusPosition())array_push($columns,$this->mytablegui->defineColumn($column_names[7],'edit_status',$table_id.'_edit_status',3,'boolean',true,$optionen));
+        if(!$this->object->getStatusPosition())array_push($columns,$this->mytablegui->defineColumn($column_names[7],'edit_status',$table_id.'_edit_status',3,'boolean',true,$optionen));
+        if($this->object->getShowEditStatusButton() AND !$this->object->getStatusPosition()) array_push($columns,$this->mytablegui->defineColumn($column_names[8],'id','',$width,'text',false));
         array_push($columns,$this->mytablegui->defineColumn($column_names[0],'tasks',$table_id.'_tasks',$width,'text',true) );
-        if($this->isShowStartdate())	array_push($columns,$this->mytablegui->defineColumn($column_names[1],'startdate',$table_id.'_startdate',$width,'date',true));
-        if($this->isEnddateShown())array_push($columns,$this->mytablegui->defineColumn($column_names[2],'enddate',$table_id.'_enddate',$width,'date',true));
-        if($this->isDescriptionShown())array_push($columns,$this->mytablegui->defineColumn($column_names[3],'description',$table_id.'_description',$description_width,'text',true));
-        if($this->isShowCreatedby())	array_push($columns,$this->mytablegui->defineColumn($column_names[4],'created_by',$table_id.'_created_by',$width,'text',true));
-        if($this->isShowUpdatedby())	array_push($columns,$this->mytablegui->defineColumn($column_names[5],'updated_by',$table_id.'_updated_by',$width,'text',true));
-        if($this->isStatusPosition())array_push($columns,$this->mytablegui->defineColumn($column_names[7],'edit_status',$table_id.'_edit_status',$width,'boolean',true,$optionen));
-        if($this->isEditStatusButtonShown()) array_push($columns,$this->mytablegui->defineColumn($column_names[8],'id','',$width,'text',false));
+        if($this->object->getShowStartDate())	array_push($columns,$this->mytablegui->defineColumn($column_names[1],'startdate',$table_id.'_startdate',$width,'date',true));
+        if($this->object->getShowEnddate())array_push($columns,$this->mytablegui->defineColumn($column_names[2],'enddate',$table_id.'_enddate',$width,'date',true));
+        if($this->object->getShowDescription())array_push($columns,$this->mytablegui->defineColumn($column_names[3],'description',$table_id.'_description',$description_width,'text',true));
+        if($this->object->getShowCreatedBy())	array_push($columns,$this->mytablegui->defineColumn($column_names[4],'created_by',$table_id.'_created_by',$width,'text',true));
+        if($this->object->getShowUpdatedBy())	array_push($columns,$this->mytablegui->defineColumn($column_names[5],'updated_by',$table_id.'_updated_by',$width,'text',true));
+        if($this->object->getStatusPosition())array_push($columns,$this->mytablegui->defineColumn($column_names[7],'edit_status',$table_id.'_edit_status',3,'boolean',true,$optionen));
+        if($this->object->getShowEditStatusButton() AND $this->object->getStatusPosition()) array_push($columns,$this->mytablegui->defineColumn($column_names[8],'id','',$width,'text',false));
+
+
 
 
         $this->columns=$columns;
         $this->mytablegui->setColumns($columns);
         $this->setTasklistColumns($columns);
 
-        if($this->isBeforeStartDateShown())
+        if($this->object->getBeforeStartdateShown())
         {
             $ti = new ilCheckboxInputGUI($column_names[9], "extra_0");
             $this->mytablegui->setExtraFilter($ti);
@@ -69,7 +73,6 @@ class ilMilestoneTaskListGUI extends ilTaskListGUI
 
 
     }
-
 
     function applyFilter()
     {
@@ -193,9 +196,9 @@ class ilMilestoneTaskListGUI extends ilTaskListGUI
             return '';
         }
     }
-    
-    
-    
+
+
+
 
     function setMilestoneId($value)
     {
@@ -249,18 +252,18 @@ class ilMilestoneTaskListGUI extends ilTaskListGUI
     {
 
         $sql_string=$this->getSqlString();
-        if($this->isCollectlist())$sql_string=substr($sql_string,0,strpos($sql_string,"WHERE")+5).' ';
-        if($this->isCollectlist())$sql_string=$sql_string."milestone_id = ".$this->milestoneid." AND ";
+        if($this->object->getIsCollectlist())$sql_string=substr($sql_string,0,strpos($sql_string,"WHERE")+5).' ';
+        if($this->object->getIsCollectlist())$sql_string=$sql_string."milestone_id = ".$this->milestoneid." AND ";
 
         if(!$filter)
         {
-            if($this->isCollectlist())$sql_string=$sql_string.$this->addIdsForCollectListAtString($this->getIdsForCollectTheirTasks());
+            if($this->object->getIsCollectlist())$sql_string=$sql_string.$this->addIdsForCollectListAtString($this->getIdsForCollectTheirTasks());
             $sql_string=$sql_string.$this->noFilterAddString();
             $sql_string=$sql_string.$this->notAtStartdate();
         }else
         {
             $i=0;
-            if($this->isCollectlist())$sql_string=$this->CollectListFilter('attechedto',$sql_string);
+            if($this->object->getIsCollectlist())$sql_string=$this->CollectListFilter('attechedto',$sql_string);
             $sql_string=$sql_string.$this->notAtStartdateFilter();
             foreach($this->columns as $column)
             {
@@ -307,12 +310,12 @@ class ilMilestoneTaskListGUI extends ilTaskListGUI
             $result = $ilDB->query($sql_string);
             while ($record = $ilDB->fetchAssoc($result)) {
 
-                if($this->isEnddateShown())
+                if($this->object->getShowEnddate())
                 {
                     $enddate_time_stamp = strtotime( $record['enddate'] );
 
                     $record['enddate'] = $this->formatDate($record['enddate']);
-                    if ($this->getEnddateWarning() AND $enddate_time_stamp < time()) {
+                    if ($this->object->getEnddateWarning() AND $enddate_time_stamp < time()) {
                         $record['enddate'] = $this->changeDate($record['enddate']);
                     }
                 }
@@ -352,7 +355,7 @@ class ilMilestoneTaskListGUI extends ilTaskListGUI
             switch ($key)
             {
                 case "tasks":
-                    if(!$this->isStatusPosition() AND $this->isEditStatusButtonShown())$sorted_record["fertig"]=$record["fertig"];
+                    if(!$this->object->getStatusPosition() AND $this->object->getShowEditStatusButton())$sorted_record["fertig"]=$record["fertig"];
                     $sorted_record[$key] = $value;
                     break;
                 default:

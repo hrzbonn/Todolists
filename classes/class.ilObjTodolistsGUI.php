@@ -1605,7 +1605,7 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 				$namen ="";
 			}
 
-			$table = new ilMilestoneTaskListGUI(str_replace(" ","_",$record["milestone"]).$namen,$record["milestone"].$namen,$columnnames,$optionen,$this->myRefId,$record["objectid"]);
+			$table = new ilMilestoneTaskListGUI(str_replace(" ","_",$record["milestone"]).$namen,$record["milestone"].$namen,$columnnames,$optionen,$this->myRefId,$record["objectid"],$this->object);
 
 			if(isset($_SESSION[str_replace(" ","_",$record["milestone"])."_filter"]))
 			{
@@ -1710,7 +1710,7 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 		$_SESSION["Tabel_id"]=$meilenstein_id;
 		$_SESSION[$meilenstein_id."_filter"]=true;
 
-		$table = new ilMilestoneTaskListGUI($meilenstein_id,$meilenstein_name,$columnnames,$optionen,$this->myRefId,$this->obj_id);
+		$table = new ilMilestoneTaskListGUI($meilenstein_id,$meilenstein_name,$columnnames,$optionen,$this->myRefId,$this->obj_id,$this->object);
 		$table->applyFilter();
 	}
 
@@ -1737,7 +1737,7 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 		$_SESSION[$meilenstein_id."_filter"]=false;
 		$_SESSION[$meilenstein_id."_cleartable"]=true;
 
-		$table = new ilMilestoneTaskListGUI($meilenstein_id,$meilenstein_name,$columnnames,$optionen,$this->myRefId,$this->obj_id);
+		$table = new ilMilestoneTaskListGUI($meilenstein_id,$meilenstein_name,$columnnames,$optionen,$this->myRefId,$this->obj_id,$this->object);
 		$table->resetFilter();
 	}
 	
@@ -1761,7 +1761,7 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 			unset($_SESSION['clear_table']);
 		}
 
-		$tasklist_content=new ilTaskListGUI($columnnames,$this->obj_id,$this->myRefId,$optionen,$this->txt("the_list"));
+		$tasklist_content=new ilTaskListGUI($columnnames,$this->object,$this->obj_id,$this->myRefId,$optionen,$this->txt("the_list"));
 		if($clear)
 		{
 			$tasklist_content->resetOffset();
@@ -1781,7 +1781,7 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 		$optionen=array($this->txt('both'),$this->txt('done'),$this->txt('undone'));
 		include_once ('class.ilTaskListGUI.php');
 
-		$tasklist_content=new ilTaskListGUI($columnnames,$this->obj_id,$this->myRefId,$optionen,$this->txt("the_list"));
+		$tasklist_content=new ilTaskListGUI($columnnames,$this->object,$this->obj_id,$this->myRefId,$optionen,$this->txt("the_list"));
 		$_SESSION['own_filter']=true;
 		$tasklist_content->applyFilter();
 
@@ -1799,7 +1799,7 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 		$optionen=array($this->txt('both'),$this->txt('done'),$this->txt('undone'));
 		include_once ('class.ilTaskListGUI.php');
 
-		$tasklist_content=new ilTaskListGUI($columnnames,$this->obj_id,$this->myRefId,$optionen,$this->txt("the_list"));
+		$tasklist_content=new ilTaskListGUI($columnnames,$this->object,$this->obj_id,$this->myRefId,$optionen,$this->txt("the_list"));
 		$ilCtrl->setParameterByClass("ilObjTodolistsGUI", "filter",0);
 		$_SESSION['own_filter']=false;
 		$_SESSION['clear_table']=true;
@@ -1956,7 +1956,7 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 			$this->txt('attached_to'),$this->txt("progress"));
 
 
-		$milestonetable=new ilMilestoneListGUI($this->txt("milestone"),$this->obj_id,$columnnames);
+		$milestonetable=new ilMilestoneListGUI($this->txt("milestone"),$this->object,$this->obj_id,$columnnames);
 
 		$this->initMilestoneForm();
 
@@ -1979,7 +1979,7 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 			$this->txt('attached_to'),$this->txt("progress"));
 
 
-		$milestonetable=new ilMilestoneListGUI($this->txt("milestone"),$this->obj_id,$columnnames);
+		$milestonetable=new ilMilestoneListGUI($this->txt("milestone"),$this->object,$this->obj_id,$columnnames);
 		$milestonetable->resetFilter();
 	}
 	function applyMilestoneListFilter()
@@ -1990,7 +1990,7 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 
 		$columnnames=array($this->txt("milestone"),$this->txt('startdate'),$this->txt('enddate'),$this->txt('description'),$this->txt('createdby'),$this->txt('updatedby'),
 			$this->txt('attached_to'),$this->txt("progress"));
-		$milestonetable=new ilMilestoneListGUI($this->txt("milestone"),$this->obj_id,$columnnames);
+		$milestonetable=new ilMilestoneListGUI($this->txt("milestone"),$this->object,$this->obj_id,$columnnames);
 		$milestonetable->applyFilter();
 	}
 

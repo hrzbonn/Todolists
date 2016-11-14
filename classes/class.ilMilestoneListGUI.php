@@ -15,8 +15,9 @@ class ilMilestoneListGUI
     private $columns;
     private $data;
     private $objid;
+    private $object;
     
-    function __construct($table_name,$objectid,$columnnames)
+    function __construct($table_name,$object,$objectid,$columnnames)
     {
         $this->setTemplatePath('/Customizing/global/plugins/Services/Repository/RepositoryObject/Todolists');
         $this->setTemplateName('table3');
@@ -25,6 +26,7 @@ class ilMilestoneListGUI
         $this->setTableId('milestoneTable');
         $this->setObjectId($objectid);
         $this->setColumnNames($columnnames);
+        $this->object=$object;
 
         $this->myTableGui = new ilMyTableGUI($this,$this->getParentCmd(),$this->getTemplatePath(),$this->getTemplateName(),$this->getPluginName(),$this->getTableId());
         $this->myTableGui->setFilterCommand("applyMilestoneListFilter"); 
@@ -163,7 +165,7 @@ class ilMilestoneListGUI
 
         }
         $sql_string=$sql_string."id FROM rep_robj_xtdo_milsto WHERE";
-        if(!$this->isCollectlist())$sql_string=$sql_string.  " objectid = ". $ilDB->quote($this->getObjectId(),"integer");
+        if(!$this->object->getIsCollectlist())$sql_string=$sql_string.  " objectid = ". $ilDB->quote($this->getObjectId(),"integer");
 
         return $sql_string;
     }
@@ -185,7 +187,7 @@ class ilMilestoneListGUI
     function addCollectlistString()
     {
 
-        if($this->isCollectlist())
+        if($this->object->getIsCollectlist())
         {
             $ids =$this->getIdsForCollectTheirMilestones();
             global $ilDB;
@@ -271,7 +273,7 @@ class ilMilestoneListGUI
         $sql_string=$this->getStartSqlString();
 
 
-        if($this->isCollectlist())
+        if($this->object->getIsCollectlist())
         {
             $sql_string=$this->CollectListFilter('attechedto_'.$this->getTableId(),$sql_string);
         }
@@ -396,8 +398,8 @@ class ilMilestoneListGUI
                     break;
                 case "milestone":
                     $array[$key]=$value;
-                    if($this->isStartdateShown())$array["startdate"]=$this->getStartDate($data["id"]);
-                    if($this->isEnddateShown())$array["enddate"]=$this->getEndDate($data["id"]);
+                    if($this->object->getShowStartDate())$array["startdate"]=$this->getStartDate($data["id"]);
+                    if($this->object->getShowEnddate())$array["enddate"]=$this->getEndDate($data["id"]);
                     break;
                 case "description":
                     if(strlen($data[$key]) > 100)
@@ -433,7 +435,7 @@ class ilMilestoneListGUI
                     break;
                 case "progress":
 
-                    if($this->isCollectlist())
+                    if($this->object->getIsCollectlist())
                     {
                         $worklistname = $this->getPath($data['id']) . '->' . $this->getWorkListNameWithTaskId($data['id']);
                         $ref_id = $this->getLinkRefId($this->getObjectIdWithTaskId($data['id']));
@@ -476,8 +478,8 @@ class ilMilestoneListGUI
         global $ilDB;
 
         $sql_string="SELECT startdate FROM rep_robj_xtdo_tasks WHERE milestone_id = ".$id;
-        if(!$this->isCollectlist())$sql_string=$sql_string." AND objectid = ".$this->getObjectId();
-        if($this->isCollectlist())$sql_string=$sql_string." AND ".$this->addCollectlistString();
+        if(!$this->object->getIsCollectlist())$sql_string=$sql_string." AND objectid = ".$this->getObjectId();
+        if($this->object->getIsCollectlist())$sql_string=$sql_string." AND ".$this->addCollectlistString();
         $result = $ilDB->query($sql_string);
 
 
@@ -508,8 +510,8 @@ class ilMilestoneListGUI
         global $ilDB;
 
         $sql_string="SELECT enddate FROM rep_robj_xtdo_tasks WHERE milestone_id = ".$id;
-        if(!$this->isCollectlist())$sql_string=$sql_string." AND objectid = ".$this->getObjectId();
-        if($this->isCollectlist())$sql_string=$sql_string." AND ".$this->addCollectlistString();
+        if(!$this->object->getIsCollectlist())$sql_string=$sql_string." AND objectid = ".$this->getObjectId();
+        if($this->object->getIsCollectlist())$sql_string=$sql_string." AND ".$this->addCollectlistString();
 
         $result = $ilDB->query($sql_string);
 
@@ -532,7 +534,7 @@ class ilMilestoneListGUI
             return "";
         }
         if($enddate_unix) {
-            if($this->getEnddateWarning() AND $enddate_unix < time())
+            if($this->object->getEnddateWarning() AND $enddate_unix < time())
             return $this->changeDate(date("d.m.Y", $enddate_unix));
             else
             return date("d.m.Y", $enddate_unix);
@@ -542,11 +544,11 @@ class ilMilestoneListGUI
 
     protected function changeDate($date)
     {
-        if($this->getEnddateCursive())
+        if($this->object->getEnddateCursive())
         {
             $date='<i>'.$date.'</i>';
         }
-        if($this->getEnddateFat())
+        if($this->object->getEnddateFat())
         {
             $date='<b>'.$date.'</b>';
         }
@@ -555,7 +557,7 @@ class ilMilestoneListGUI
         $css="<style>
         .enddate
         {
-            color: #".$this->getEnddateColor()." ;
+            color: #".$this->object->getEnddateColor()." ;
         }
      </style>";
 
@@ -563,25 +565,6 @@ class ilMilestoneListGUI
         $date=$css.'<span class="enddate">'.$date.'</span>';
 
         return $date;
-    }
-    protected function getEnddateWarning()
-    {
-        return $this->SqlSelectQueryOneValue('enddate_warning');
-    }
-
-    protected function getEnddateCursive()
-    {
-        return $this->SqlSelectQueryOneValue('enddate_cursive');
-    }
-
-    protected function getEnddateFat()
-    {
-        return $this->SqlSelectQueryOneValue('enddate_fat');
-    }
-
-    protected function getEnddateColor()
-    {
-        return $this->SqlSelectQueryOneValue('enddate_color');
     }
 
     function progressInPercentbar($progress)
@@ -630,12 +613,12 @@ class ilMilestoneListGUI
 
 
         array_push($columns,$this->myTableGui->defineColumn($column_name_array[0],'milestone','milestone_'.$this->getTableId(),30,'text',true) );
-        if($this->isStartdateShown())array_push($columns,$this->myTableGui->defineColumn($column_name_array[1],'','startdate_'.$this->getTableId(),10,'date',false));
-        if($this->isEnddateShown())array_push($columns,$this->myTableGui->defineColumn($column_name_array[2],'','enddate_'.$this->getTableId(),10,'date',false));
-        if($this->isDescriptionShown())array_push($columns,$this->myTableGui->defineColumn($column_name_array[3],'description','description_'.$this->getTableId(),10+$add_at_description,'text',true));
-        if($this->isCreatedByShown())array_push($columns,$this->myTableGui->defineColumn($column_name_array[4],'created_by','created_by_'.$this->getTableId(),4,'text',true));
-        if($this->isUpdatedByShown())array_push($columns,$this->myTableGui->defineColumn($column_name_array[5],'updated_by','updated_by_'.$this->getTableId(),3,'text',true));
-        if($this->isCollectlist())array_push($columns,$this->myTableGui->defineColumn($column_name_array[6],'','attechedto_'.$this->getTableId(),10,'text',true));
+        if($this->object->getShowStartDate())array_push($columns,$this->myTableGui->defineColumn($column_name_array[1],'','startdate_'.$this->getTableId(),10,'date',false));
+        if($this->object->getShowEnddate())array_push($columns,$this->myTableGui->defineColumn($column_name_array[2],'','enddate_'.$this->getTableId(),10,'date',false));
+        if($this->object->getShowDescription())array_push($columns,$this->myTableGui->defineColumn($column_name_array[3],'description','description_'.$this->getTableId(),10+$add_at_description,'text',true));
+        if($this->object->getShowCreatedBy())array_push($columns,$this->myTableGui->defineColumn($column_name_array[4],'created_by','created_by_'.$this->getTableId(),4,'text',true));
+        if($this->object->getShowUpdatedBy())array_push($columns,$this->myTableGui->defineColumn($column_name_array[5],'updated_by','updated_by_'.$this->getTableId(),3,'text',true));
+        if($this->object->getIsCollectlist())array_push($columns,$this->myTableGui->defineColumn($column_name_array[6],'','attechedto_'.$this->getTableId(),10,'text',true));
         array_push($columns,$this->myTableGui->defineColumn($column_name_array[7],'progress','progress_'.$this->getTableId(),30,'text',true));
         array_push($columns,$this->myTableGui->defineColumn($lng->txt("action"),"","",30,'text',false));
 
@@ -646,42 +629,14 @@ class ilMilestoneListGUI
     private function addAtDescriptionWidth()
     {
         $add_at_description=0;
-        if(!$this->isStartdateShown())$add_at_description=$add_at_description+10;
-        if(!$this->isCreatedByShown())$add_at_description=$add_at_description+4;
-        if(!$this->isUpdatedByShown())$add_at_description=$add_at_description+3;
-        if(!$this->isCollectlist())$add_at_description=$add_at_description+10;
+        if(!$this->object->getShowStartDate())$add_at_description=$add_at_description+10;
+        if(!$this->object->getShowCreatedBy())$add_at_description=$add_at_description+4;
+        if(!$this->object->getShowUpdatedBy())$add_at_description=$add_at_description+3;
+        if(!$this->object->getIsCollectlist())$add_at_description=$add_at_description+10;
 
         return $add_at_description;
     }
 
-    protected function isDescriptionShown()
-    {
-        return $this->SqlSelectQueryOneValue('show_description');
-    }
-    protected function isEnddateShown()
-    {
-        return $this->SqlSelectQueryOneValue('show_enddate');
-    }
-
-    private function isCollectlist()
-    {
-        return $this->SqlSelectQueryOneValue('collectlist');
-    }
-
-    private function isCreatedByShown()
-    {
-        return $this->SqlSelectQueryOneValue('show_createdby');
-    }
-
-    private function isUpdatedByShown()
-    {
-        return $this->SqlSelectQueryOneValue('show_updatedby');
-    }
-
-    private function isStartdateShown()
-    {
-        return $this->SqlSelectQueryOneValue('show_startdate');
-    }
 
     private function SqlSelectQueryOneValue($database_name)
     {

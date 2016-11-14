@@ -10,7 +10,7 @@ include_once ("./Services/Form/classes/class.ilCheckboxGroupInputGUI.php");
 include_once ("./Services/Form/classes/class.ilSelectInputGUI.php");
 include_once ("./Services/Form/classes/class.ilDateDurationInputGUI.php");
 
-class ilMyTableGUI extends ilTable2GUI
+    class ilMyTableGUI extends ilTable2GUI
 {
     private $tableTitle;
     private $actionbutton_exists;
@@ -137,11 +137,11 @@ class ilMyTableGUI extends ilTable2GUI
     //------------------------------------------------------------------------------------------------------------------
 
     //Hilfsfunktion zum erstellen einer Spalte
-    function defineColumn($column_name,$database_name,$sort_field,$width,$type,$set_filter=false,$optionen=array())
+    function defineColumn($column_name,$database_name,$sort_and_filter_name_field,$width,$type,$set_filter=false,$optionen=array())
     {
         $column['column_name']=$column_name;
         $column['database_name']=$database_name;
-        $column['sort_and_filter']=$sort_field;
+        $column['sort_and_filter']=$sort_and_filter_name_field;
         $column['width']=$width;
         $column['type']=$type;
         $column['set_filter']=$set_filter;
