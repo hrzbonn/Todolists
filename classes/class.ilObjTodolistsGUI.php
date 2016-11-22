@@ -40,8 +40,8 @@ include_once ("Services/Utilities/classes/class.ilConfirmationGUI.php");
 * - GUI classes used by this class are ilPermissionGUI (provides the rbac
 *   screens) and ilInfoScreenGUI (handles the info screen).
 *
-* @ilCtrl_isCalledBy ilObjTodolistsGUI: ilRepositoryGUI, ilAdministrationGUI, ilObjPluginDispatchGUI, ilMyTableGUI,ilTaskListGUI,ilMilestoneListGUI,ilMilestoneTaskListGUI
-* @ilCtrl_Calls ilObjTodolistsGUI: ilPermissionGUI, ilInfoScreenGUI, ilObjectCopyGUI, ilCommonActionDispatcherGUI, ilTaskListGUI,ilMilestoneListGUI,ilMilestoneTaskListGUI
+* @ilCtrl_isCalledBy ilObjTodolistsGUI: ilRepositoryGUI, ilAdministrationGUI, ilObjPluginDispatchGUI, ilMyTableGUI,ilTaskListGUI,ilMilestoneListGUI,ilMilestoneTaskListGUI,ilTaskGUI
+* @ilCtrl_Calls ilObjTodolistsGUI: ilPermissionGUI, ilInfoScreenGUI, ilObjectCopyGUI, ilCommonActionDispatcherGUI, ilTaskListGUI,ilMilestoneListGUI,ilMilestoneTaskListGUI,ilTaskGUI
 *
 */
 class ilObjTodolistsGUI extends ilObjectPluginGUI
@@ -746,7 +746,7 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 
 		if($this->is_collectlist())
 		{
-			$text_for_ID=$this->txt('text_befor_id').' '.'<b>'.$this->obj_id.'</b>'.'</br>'.$this->txt('text_after_id_collectlist');
+			$text_for_ID=$this->txt('text_befor_id').' '.'<b>'.$this->object_id.'</b>'.'</br>'.$this->txt('text_after_id_collectlist');
 		}
 
 		$tpl->setContent($text_for_ID.$this->form->getHTML());
@@ -926,8 +926,8 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 	public function updateProperties()
 	{
 
-		global $tpl, $lng, $ilCtrl,$ilDB;
-
+		global $tpl, $lng, $ilCtrl,$ilDB,$ilTabs;
+		$ilTabs->activateTab("properties");
 		$this->initPropertiesForm();
 		if ($this->form->checkInput())
 		{
@@ -990,7 +990,7 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 	{
 		global $ilDB;
 		$sql_string="SELECT milestone FROM rep_robj_xtdo_milsto WHERE ";
-		$sql_string=$sql_string."objectid = ".$this->obj_id;
+		$sql_string=$sql_string."objectid = ".$this->object_id;
 
 		$result = $ilDB->query($sql_string);
         while ($record = $ilDB->fetchAssoc($result))
@@ -1052,6 +1052,7 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 	function versionBigger52()
 	{
 		//prüfe ob Version größer 51 wenn nicht gibt true zurück um alte Funktionen aufzurufen
+		//#TODO:Richtige Versionskontrolle einbauen
 		global $ilSetting;
 		if(strpos($ilSetting->get("ilias_version"),"2.0") == false)
 		{
@@ -1356,7 +1357,7 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 	function newtask()
 	{
 		$this->set_is_moreprops_open();
-		$this->updatetodos($this->getTodosValues(),$this->obj_id);
+		$this->updatetodos($this->getTodosValues(),$this->object_id);
 		$this->showContent();
 	}
 
@@ -1405,7 +1406,7 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 	private function is_percent_bar_shown()
 	{
 		global $ilDB;
-		$sql_string="SELECT show_percent_bar FROM rep_robj_xtdo_data WHERE id = ". $ilDB->quote($this->obj_id,"integer");
+		$sql_string="SELECT show_percent_bar FROM rep_robj_xtdo_data WHERE id = ". $ilDB->quote($this->object_id,"integer");
 		$result = $ilDB->query($sql_string);
 		while ($record = $ilDB->fetchAssoc($result)) {
 			$show=$record["show_percent_bar"];
@@ -1428,7 +1429,7 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 	private function is_collectlist()
 	{
 		global $ilDB;
-		$sql_string="SELECT collectlist FROM rep_robj_xtdo_data WHERE id = ". $ilDB->quote($this->obj_id,"integer");
+		$sql_string="SELECT collectlist FROM rep_robj_xtdo_data WHERE id = ". $ilDB->quote($this->object_id,"integer");
 		$result = $ilDB->query($sql_string);
 		while ($record = $ilDB->fetchAssoc($result))
 		{
@@ -1472,11 +1473,11 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 	{
 		global $ilDB;
 
-			$sql_string = "SELECT edit_status FROM rep_robj_xtdo_tasks WHERE milestone_id=0 AND objectid = " . $ilDB->quote($this->obj_id, "integer") . ' AND edit_status = ' . $ilDB->quote(1, "integer");
+			$sql_string = "SELECT edit_status FROM rep_robj_xtdo_tasks WHERE milestone_id=0 AND objectid = " . $ilDB->quote($this->object_id, "integer") . ' AND edit_status = ' . $ilDB->quote(1, "integer");
 			$result = $ilDB->query($sql_string);
 			$fertig = $this->count_sql_result($result);
 
-			$sql_string = "SELECT edit_status FROM rep_robj_xtdo_tasks WHERE milestone_id=0 AND objectid = " . $ilDB->quote($this->obj_id, "integer");
+			$sql_string = "SELECT edit_status FROM rep_robj_xtdo_tasks WHERE milestone_id=0 AND objectid = " . $ilDB->quote($this->object_id, "integer");
 			$result = $ilDB->query($sql_string);
 			$alle = $this->count_sql_result($result);
 
@@ -1517,7 +1518,7 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 	private function get_all_list_ids_for_collect_list()
 	{
 		global $ilDB;
-		$sql_string="SELECT id FROM rep_robj_xtdo_data WHERE get_collect = ". $ilDB->quote($this->obj_id,"integer");
+		$sql_string="SELECT id FROM rep_robj_xtdo_data WHERE get_collect = ". $ilDB->quote($this->object_id,"integer");
 		$result = $ilDB->query($sql_string);
 		$id_array=array();
 		while ($record = $ilDB->fetchAssoc($result)) {
@@ -1569,8 +1570,8 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 
 		$tpl->setContent($html_content);
 	}
-	
-	
+
+
 	function getMilestoneTable()
 	{
 		include_once ('class.ilMilestoneTaskListGUI.php');
@@ -1579,18 +1580,18 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 		$htmlCode="";
 
 		$columnnames=array($this->txt('task'),$this->txt('startdate'),$this->txt('enddate'),$this->txt('description'),$this->txt('createdby'),$this->txt('updatedby'),
-						   $this->txt('attached_to'),$this->txt('status'),$this->txt('status_change'),$this->txt('startdate_before'));
+			$this->txt('attached_to'),$this->txt('status'),$this->txt('status_change'),$this->txt('startdate_before'));
 
 		$optionen=array($this->txt('both'),$this->txt('done'),$this->txt('undone'));
 
 
 		$sql_string="SELECT objectid,milestone,id FROM rep_robj_xtdo_milsto WHERE ";
-		if(!$this->is_collectlist())$sql_string=$sql_string."objectid = ".$this->obj_id;
+		if(!$this->is_collectlist())$sql_string=$sql_string."objectid = ".$this->object_id;
 		if($this->is_collectlist())$sql_string=$sql_string.$this->addCollectlistString();
 		$result = $ilDB->query($sql_string);
 
-		
-		
+
+
 		while ($record = $ilDB->fetchAssoc($result))
 		{
 
@@ -1599,84 +1600,44 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 				$sql_string_two = "SELECT namen FROM rep_robj_xtdo_data WHERE ";
 				$sql_string_two = $sql_string_two . "id = " . $record["objectid"];
 				$another_result = $ilDB->query($sql_string_two);
-				while ($record_two = $ilDB->fetchAssoc($another_result))$namen = ' ['.$record_two["namen"].']';
+				while ($record_two = $ilDB->fetchAssoc($another_result))
+				{
+					$namen = ' ['.$record_two["namen"].']';
+				}
 			}else
 			{
 				$namen ="";
 			}
+			$table_id=str_replace(" ","_",$record["milestone"]).$this->object_id;
 
-			$table = new ilMilestoneTaskListGUI(str_replace(" ","_",$record["milestone"]).$namen,$record["milestone"].$namen,$columnnames,$optionen,$this->myRefId,$record["objectid"],$this->object);
+			$table = new ilMilestoneTaskListGUI($table_id,$record["milestone"].$namen,$columnnames,$optionen,$this->myRefId,$record["objectid"],$this->object);
 
-			if(isset($_SESSION[str_replace(" ","_",$record["milestone"])."_filter"]))
+			if(isset($_SESSION[$table_id."_filter".$this->object_id]))
 			{
-				$filter=$_SESSION[str_replace(" ","_",$record["milestone"])."_filter"];
+				$filter=$_SESSION[$table_id."_filter".$this->object_id];
 			}
-			
-			if(isset($_SESSION[str_replace(" ","_",$record["milestone"])."_cleartable"]))
+
+			if(isset($_SESSION[$table_id."_cleartable".$this->object_id]))
 			{
-				if($_SESSION[str_replace(" ","_",$record["milestone"])."_cleartable"])
+				if($_SESSION[$table_id."_cleartable".$this->object_id])
 				{
 					$table->resetOffset();
 				}
-				unset($_SESSION[str_replace(" ","_",$record["milestone"])."_cleartable"]);
+				unset($_SESSION[$table_id."_cleartable".$this->object_id]);
 			}
-			
+
 			$table->setMilestoneId($record["id"]);
 			$table->getDataFromDb($filter);
 			$htmlCode=$htmlCode.$table->getHTML();
 		}
-		
+
 
 		return $htmlCode;
-		
-	}
 
-
-	function getIdsForCollectTheirMilestones()
-	{
-		global $ilDB;
-		$sql_buffer="SELECT id FROM rep_robj_xtdo_data WHERE get_collect = ".$ilDB->quote($this->object_id,"integer");
-		$result = $ilDB->query($sql_buffer);
-		$ids=array();
-		while ($record = $ilDB->fetchAssoc($result))
-		{
-			array_push($ids,$record['id']);
-		}
-		array_push($ids,$this->object_id);
-		return $ids;
 	}
 
 
 
-	function addCollectlistString()
-	{
-		if($this->is_collectlist())
-		{
-			$ids =$this->getIdsForCollectTheirMilestones();
-			global $ilDB;
-			if(count($ids)!=0)
-			{
-				$count=0;
-				$sql_string='(';
-				foreach($ids as $id)
-				{
-					if($count==0)
-					{
-						$sql_string=$sql_string.  " objectid = ". $ilDB->quote($id,"integer");
-					}else
-					{
-						$sql_string=$sql_string.  " OR objectid = ". $ilDB->quote($id,"integer");
-					}
-					$count++;
-				}
-				$sql_string=$sql_string.')';
-				return $sql_string;
-			}
-			return '';
-		}
-
-		return "";
-	}
 
 
 
@@ -1686,7 +1647,7 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 	{
 		include_once("Services/Form/classes/class.ilPropertyFormGUI.php");
 		include_once ('class.ilMilestoneTaskListGUI.php');
-		global $tpl, $ilTabs, $lng,$ilCtrl;
+		global $ilTabs;
 
 		$columnnames=array($this->txt('task'),$this->txt('startdate'),$this->txt('enddate'),$this->txt('description'),$this->txt('createdby'),$this->txt('updatedby'),
 			$this->txt('attached_to'),$this->txt('status'),$this->txt('status_change'),$this->txt('startdate_before'));
@@ -1699,25 +1660,29 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 
 		$id="";
 		foreach ($_POST as $key => $value) {
-			$id=$key; break;
+			if(strpos($key,"tasks")!=FALSE)
+			{
+				$id = $key;
+				break;
+			}
 		}
-
 		$id=substr($id,0,strlen($id)-6);
 
 		$meilenstein_id=$id;
 		$meilenstein_name=str_replace('_',' ',$id);
 
-		$_SESSION["Tabel_id"]=$meilenstein_id;
-		$_SESSION[$meilenstein_id."_filter"]=true;
+		$_SESSION["Tabel_id".$this->object_id]=$meilenstein_id;
+		$_SESSION[$meilenstein_id."_filter".$this->object_id]=true;
 
-		$table = new ilMilestoneTaskListGUI($meilenstein_id,$meilenstein_name,$columnnames,$optionen,$this->myRefId,$this->obj_id,$this->object);
-		$table->applyFilter();
+
+		$table = new ilMilestoneTaskListGUI($meilenstein_id,$meilenstein_name,$columnnames,$optionen,$this->myRefId,$this->object_id,$this->object);
+		$table->applyMilestoneFilter();
 	}
 
 	function resetMilestoneFilter()
 	{
 		include_once("Services/Form/classes/class.ilPropertyFormGUI.php");
-		global $tpl, $ilTabs, $lng,$ilCtrl;
+		global $ilTabs;
 
 		$ilTabs->activateTab("content");
 		include_once ('class.ilMilestoneTaskListGUI.php');
@@ -1728,17 +1693,17 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 
 
 
-		if(isset($_SESSION["Tabel_id"]))
+		if(isset($_SESSION["Tabel_id".$this->object_id]))
 		{
-			$meilenstein_id = $_SESSION["Tabel_id"];
-			unset($_SESSION["Tabel_id"]);
+			$meilenstein_id = $_SESSION["Tabel_id".$this->object_id];
+			unset($_SESSION["Tabel_id".$this->object_id]);
 			$meilenstein_name = str_replace("_", ' ', $meilenstein_id);
 		}
-		$_SESSION[$meilenstein_id."_filter"]=false;
-		$_SESSION[$meilenstein_id."_cleartable"]=true;
+		$_SESSION[$meilenstein_id."_filter".$this->object_id]=false;
+		$_SESSION[$meilenstein_id."_cleartable".$this->object_id]=true;
 
-		$table = new ilMilestoneTaskListGUI($meilenstein_id,$meilenstein_name,$columnnames,$optionen,$this->myRefId,$this->obj_id,$this->object);
-		$table->resetFilter();
+		$table = new ilMilestoneTaskListGUI($meilenstein_id,$meilenstein_name,$columnnames,$optionen,$this->myRefId,$this->object_id,$this->object);
+		$table->resetMilestoneFilter();
 	}
 	
 	function getTable()
@@ -1750,18 +1715,18 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 
 		$optionen=array($this->txt('both'),$this->txt('done'),$this->txt('undone'));
 
-		if(isset($_SESSION['own_filter']))
+		if(isset($_SESSION['own_filter'.$this->object_id]))
 		{
-			$filter=$_SESSION['own_filter'];
+			$filter=$_SESSION['own_filter'.$this->object_id];
 		}
 
-		if(isset($_SESSION['clear_table']))
+		if(isset($_SESSION['clear_table'.$this->object_id]))
 		{
-			$clear=$_SESSION['clear_table'];
-			unset($_SESSION['clear_table']);
+			$clear=$_SESSION['clear_table'.$this->object_id];
+			unset($_SESSION['clear_table'.$this->object_id]);
 		}
 
-		$tasklist_content=new ilTaskListGUI($columnnames,$this->object,$this->obj_id,$this->myRefId,$optionen,$this->txt("the_list"));
+		$tasklist_content=new ilTaskListGUI($columnnames,$this->object,$this->object_id,$this->myRefId,$optionen,$this->txt("the_list"));
 		if($clear)
 		{
 			$tasklist_content->resetOffset();
@@ -1772,7 +1737,7 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 	function applyFilter()
 	{
 		include_once("Services/Form/classes/class.ilPropertyFormGUI.php");
-		global $tpl, $ilTabs, $lng,$ilCtrl;
+		global $ilTabs;
 
 		$ilTabs->activateTab("content");
 		$columnnames=array($this->txt('task'),$this->txt('startdate'),$this->txt('enddate'),$this->txt('description'),$this->txt('createdby'),$this->txt('updatedby'),
@@ -1781,8 +1746,8 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 		$optionen=array($this->txt('both'),$this->txt('done'),$this->txt('undone'));
 		include_once ('class.ilTaskListGUI.php');
 
-		$tasklist_content=new ilTaskListGUI($columnnames,$this->object,$this->obj_id,$this->myRefId,$optionen,$this->txt("the_list"));
-		$_SESSION['own_filter']=true;
+		$tasklist_content=new ilTaskListGUI($columnnames,$this->object,$this->object_id,$this->myRefId,$optionen,$this->txt("the_list"));
+		$_SESSION['own_filter'.$this->object_id]=true;
 		$tasklist_content->applyFilter();
 
 	}
@@ -1790,7 +1755,7 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 	function resetFilter()
 	{
 		include_once("Services/Form/classes/class.ilPropertyFormGUI.php");
-		global $tpl, $ilTabs, $lng,$ilCtrl;
+		global $ilTabs,$ilCtrl;
 
 		$ilTabs->activateTab("content");
 		$columnnames=array($this->txt('task'),$this->txt('startdate'),$this->txt('enddate'),$this->txt('description'),$this->txt('createdby'),$this->txt('updatedby'),
@@ -1799,10 +1764,10 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 		$optionen=array($this->txt('both'),$this->txt('done'),$this->txt('undone'));
 		include_once ('class.ilTaskListGUI.php');
 
-		$tasklist_content=new ilTaskListGUI($columnnames,$this->object,$this->obj_id,$this->myRefId,$optionen,$this->txt("the_list"));
+		$tasklist_content=new ilTaskListGUI($columnnames,$this->object,$this->object_id,$this->myRefId,$optionen,$this->txt("the_list"));
 		$ilCtrl->setParameterByClass("ilObjTodolistsGUI", "filter",0);
-		$_SESSION['own_filter']=false;
-		$_SESSION['clear_table']=true;
+		$_SESSION['own_filter'.$this->object_id]=false;
+		$_SESSION['clear_table'.$this->object_id]=true;
 		$tasklist_content->resetFilter();
 	}
 //--------------------------------------------------------------------------------------------------------------------------------
@@ -1870,7 +1835,7 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 			$ilDB->manipulateF("INSERT INTO rep_robj_xtdo_milsto (objectid, milestone, description,progress,created_by) VALUES " .
 				" (%s,%s,%s,%s,%s)",
 				array("integer", "text", "text", "integer", "integer"),
-				array($this->obj_id,$form_input['milestone'],$form_input['milestone_description'],100,$user)
+				array($this->object_id,$form_input['milestone'],$form_input['milestone_description'],100,$user)
 			);
 		}else
 		{
@@ -1883,7 +1848,7 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 	function getIdsForCollectTheirTasks()
 	{
 		global $ilDB;
-		$sql_buffer="SELECT id FROM rep_robj_xtdo_data WHERE get_collect = ".$ilDB->quote($this->obj_id,"integer");
+		$sql_buffer="SELECT id FROM rep_robj_xtdo_data WHERE get_collect = ".$ilDB->quote($this->object_id,"integer");
 		$result = $ilDB->query($sql_buffer);
 		$ids=array();
 		while ($record = $ilDB->fetchAssoc($result))
@@ -1956,7 +1921,7 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 			$this->txt('attached_to'),$this->txt("progress"));
 
 
-		$milestonetable=new ilMilestoneListGUI($this->txt("milestone"),$this->object,$this->obj_id,$columnnames);
+		$milestonetable=new ilMilestoneListGUI($this->txt("milestone"),$this->object,$this->object_id,$columnnames);
 
 		$this->initMilestoneForm();
 
@@ -1979,7 +1944,7 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 			$this->txt('attached_to'),$this->txt("progress"));
 
 
-		$milestonetable=new ilMilestoneListGUI($this->txt("milestone"),$this->object,$this->obj_id,$columnnames);
+		$milestonetable=new ilMilestoneListGUI($this->txt("milestone"),$this->object,$this->object_id,$columnnames);
 		$milestonetable->resetFilter();
 	}
 	function applyMilestoneListFilter()
@@ -1990,9 +1955,58 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 
 		$columnnames=array($this->txt("milestone"),$this->txt('startdate'),$this->txt('enddate'),$this->txt('description'),$this->txt('createdby'),$this->txt('updatedby'),
 			$this->txt('attached_to'),$this->txt("progress"));
-		$milestonetable=new ilMilestoneListGUI($this->txt("milestone"),$this->object,$this->obj_id,$columnnames);
+		$milestonetable=new ilMilestoneListGUI($this->txt("milestone"),$this->object,$this->object_id,$columnnames);
 		$milestonetable->applyFilter();
 	}
+
+
+	function getIdsForCollectTheirMilestones()
+	{
+		global $ilDB;
+		$sql_buffer="SELECT id FROM rep_robj_xtdo_data WHERE get_collect = ".$ilDB->quote($this->object_id,"integer");
+		$result = $ilDB->query($sql_buffer);
+		$ids=array();
+		while ($record = $ilDB->fetchAssoc($result))
+		{
+			array_push($ids,$record['id']);
+		}
+		array_push($ids,$this->object_id);
+		return $ids;
+	}
+
+
+
+	function addCollectlistString()
+	{
+		if($this->is_collectlist())
+		{
+			$ids =$this->getIdsForCollectTheirMilestones();
+			global $ilDB;
+			if(count($ids)!=0)
+			{
+				$count=0;
+				$sql_string='(';
+				foreach($ids as $id)
+				{
+					if($count==0)
+					{
+						$sql_string=$sql_string.  " objectid = ". $ilDB->quote($id,"integer");
+					}else
+					{
+						$sql_string=$sql_string.  " OR objectid = ". $ilDB->quote($id,"integer");
+					}
+					$count++;
+				}
+				$sql_string=$sql_string.')';
+				return $sql_string;
+			}
+			return '';
+		}
+
+		return "";
+	}
+
+
 
 }
 ?>

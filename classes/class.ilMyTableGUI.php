@@ -92,7 +92,6 @@ include_once ("./Services/Form/classes/class.ilDateDurationInputGUI.php");
                 {
                     $this->addFilterItem($ti);
                     $ti->readFromSession();
-                    $daten = $ti->getValue();
                     $this->filter[$column["sort_and_filter"]] = $ti->getValue();
                 }
             }

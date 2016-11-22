@@ -9,6 +9,7 @@ include_once ("./Services/Form/classes/class.ilCheckboxInputGUI.php");
 include_once ("./Services/Form/classes/class.ilCheckboxGroupInputGUI.php");
 include_once ("./Services/Form/classes/class.ilSelectInputGUI.php");
 include_once ("./Services/Form/classes/class.ilDateDurationInputGUI.php");
+include_once ("class.ilTaskGUI.php");
 
 //----------------------------------------------------------------------------------------------------------------------
 class ilTaskListGUI
@@ -21,7 +22,11 @@ class ilTaskListGUI
     private $taskListRefId;
     private $heigthAndWidth;
     private $object_tasklist;
-
+    private $isMilestonelist;
+    private $table_id;
+    private $direction_array;
+    private $column_name_array;
+    private $optionen;
 
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -31,6 +36,7 @@ class ilTaskListGUI
 
         //Variabeln setzen
         global $ilAccess;
+        $this->optionen=$optionen;
         $this->heigthAndWidth="100%";
         $this->limit=10;
         $this->objid=$objectid;
@@ -38,7 +44,10 @@ class ilTaskListGUI
         $this->taskListRefId=$ref_id;
         $this->table_gui = new ilMyTableGUI($this, "showContent",'/Customizing/global/plugins/Services/Repository/RepositoryObject/Todolists','table3','Todolists','Tasklist');
         $this->table_gui->setTableTitle($listnname);
-        $this->setMoreCounter(0);
+        $this->isMilestonelist=false;
+        $this->table_id="Tasklist";
+        $this->direction_array=array();
+        $this->column_name_array=$column_name_array;
 
         //Wenn User das Recht Edit_contet besitzt wird ein bearbeitungs und löschen Button in die Tabelle hinzugefügt 
         if ($ilAccess->checkAccess("edit_content", "",$ref_id ))
@@ -50,28 +59,8 @@ class ilTaskListGUI
         $this->table_gui->setFilterCommand("applyFilter");        // parent GUI class must implement this function
         $this->table_gui->setResetCommand("resetFilter");
 
-        //Berechnet die Breite der einzelnen Zeilen
-        $columns = array();
-        $width=$this->getWidth();
-        $description_width=$this->getDescriptionWidth();
-        $width=$this->correctWidth($width,$description_width);
-
-        //Hier werden die Spalten sowie deren Position gesetzt
-        //Abfrage ob Spalte aktiv
-        if(!$this->object_tasklist->getStatusPosition())   array_push($columns,$this->table_gui->defineColumn($column_name_array[7],'edit_status','edit_status',3,'boolean',true,$optionen));
-        if($this->object_tasklist->getShowEditStatusButton() AND !$this->object_tasklist->getStatusPosition()) array_push($columns,$this->table_gui->defineColumn($column_name_array[8],'id','',$width,'text',false));
-        array_push($columns,$this->table_gui->defineColumn($column_name_array[0],'tasks','tasks',$width,'text',true) );
-        if($this->object_tasklist->getShowStartDate())	array_push($columns,$this->table_gui->defineColumn($column_name_array[1],'startdate','startdate',$width,'date',true));
-        if($this->object_tasklist->getShowEnddate())array_push($columns,$this->table_gui->defineColumn($column_name_array[2],'enddate','enddate',$width,'date',true));
-        if($this->object_tasklist->getShowDescription())array_push($columns,$this->table_gui->defineColumn($column_name_array[3],'description','description',$description_width,'text',true));
-        if($this->object_tasklist->getShowCreatedBy())	array_push($columns,$this->table_gui->defineColumn($column_name_array[4],'created_by','created_by',$width,'text',true));
-        if($this->object_tasklist->getShowUpdatedBy())	array_push($columns,$this->table_gui->defineColumn($column_name_array[5],'updated_by','updated_by',$width,'text',true));
-        if($this->object_tasklist->getIsCollectlist())		array_push($columns,$this->table_gui->defineColumn($column_name_array[6],'','attechedto',$width,'text',true));
-        if($this->object_tasklist->getStatusPosition())   array_push($columns,$this->table_gui->defineColumn($column_name_array[7],'edit_status','edit_status',3,'boolean',true,$optionen));
-        if($this->object_tasklist->getShowEditStatusButton() AND $this->object_tasklist->getStatusPosition()) array_push($columns,$this->table_gui->defineColumn($column_name_array[8],'id','',$width,'text',false));
-
-        $this->columns=$columns;
-        $this->table_gui->setColumns($columns);
+        $this->setColumns();
+        $this->table_gui->setColumns($this->columns);
         
         
         if($this->object_tasklist->getBeforeStartdateShown())
@@ -83,6 +72,71 @@ class ilTaskListGUI
 
     }
 
+    function setColumns()
+    {
+        //Berechnet die Breite der einzelnen Zeilen
+        $columns = array();
+        $width=$this->getWidth();
+        $description_width=$this->getDescriptionWidth();
+        $width=$this->correctWidth($width,$description_width);
+
+        //Hier werden die Spalten sowie deren Position gesetzt
+        //Abfrage ob Spalte aktiv
+        if(!$this->object_tasklist->getStatusPosition())
+        {
+            array_push($columns,$this->table_gui->defineColumn($this->column_name_array[7],'edit_status','edit_status'.$this->objid,3,'boolean',true,$this->optionen));
+            array_push($this->direction_array,"edit_status");
+        }
+        if($this->object_tasklist->getShowEditStatusButton() AND !$this->object_tasklist->getStatusPosition())
+        {
+            array_push($columns,$this->table_gui->defineColumn($this->column_name_array[8],'id','',$width,'text',false));
+            array_push($this->direction_array,"button");
+        }
+        array_push($columns,$this->table_gui->defineColumn($this->column_name_array[0],'tasks','tasks'.$this->objid,$width,'text',true) );
+        array_push($this->direction_array,"tasks");
+        if($this->object_tasklist->getShowStartDate())
+        {
+            array_push($columns,$this->table_gui->defineColumn($this->column_name_array[1],'startdate','startdate'.$this->objid,$width,'date',true));
+            array_push($this->direction_array,"startdate");
+        }
+        if($this->object_tasklist->getShowEnddate())
+        {
+            array_push($columns,$this->table_gui->defineColumn($this->column_name_array[2],'enddate','enddate'.$this->objid,$width,'date',true));
+            array_push($this->direction_array,"enddate");
+        }
+        if($this->object_tasklist->getShowDescription())
+        {
+            array_push($columns,$this->table_gui->defineColumn($this->column_name_array[3],'description','description'.$this->objid,$description_width,'text',true));
+            array_push($this->direction_array,"description");
+        }
+        if($this->object_tasklist->getShowCreatedBy())
+        {
+            array_push($columns, $this->table_gui->defineColumn($this->column_name_array[4], 'created_by', 'created_by'.$this->objid, $width, 'text', true));
+            array_push($this->direction_array,"created_by");
+        }
+        if($this->object_tasklist->getShowUpdatedBy())
+        {
+            array_push($columns,$this->table_gui->defineColumn($this->column_name_array[5],'updated_by','updated_by'.$this->objid,$width,'text',true));
+            array_push($this->direction_array,"updated_by");
+        }
+        if($this->object_tasklist->getIsCollectlist())
+        {
+            array_push($columns,$this->table_gui->defineColumn($this->column_name_array[6],'','attechedto'.$this->objid,$width,'text',true));
+            array_push($this->direction_array,"attechedto");
+        }
+        if($this->object_tasklist->getStatusPosition())
+        {
+            array_push($columns,$this->table_gui->defineColumn($this->column_name_array[7],'edit_status','edit_status'.$this->objid,3,'boolean',true,$this->optionen));
+            array_push($this->direction_array,"edit_status");
+        }
+        if($this->object_tasklist->getShowEditStatusButton() AND $this->object_tasklist->getStatusPosition())
+        {
+            array_push($columns,$this->table_gui->defineColumn($this->column_name_array[8],'id','',$width,'text',false));
+            array_push($this->direction_array,"button");
+        }
+
+        $this->columns=$columns;
+    }
 
 //----------------------------------------------------------------------------------------------------------------------
     //Filter aufruf
@@ -119,6 +173,13 @@ class ilTaskListGUI
             $wert=$record[$database_name];
         }
         return $wert;
+    }
+    //gibt zurück ob es sich um einen Meilenstein in einer Sammelliste handelt
+    protected function getIsMilestonInCollectlist()
+    {
+        if(!$this->isMilestonelist)
+            return true;
+        else return false;
     }
 //----------------------------------------------------------------------------------------------------------------------
 //Berechnet die richtige größe der verschiedenen Spalten und gibt diese zurück
@@ -184,6 +245,16 @@ class ilTaskListGUI
     {
         $this->objid=$value;
     }
+    //Wird aufgerufen um zu zeigen dass es sich um eine MilestoneTasklist handelt
+    function setIsMilestoneListTrue()
+    {
+        $this->isMilestonelist=true;
+    }
+    //
+    function setTableId($value)
+    {
+        $this->table_id=$value;
+    }
 //----------------------------------------------------------------------------------------------------------------------
 //Filter Funktionen
 //Diese fügen dem Sql String etwas hinzu sodass der Datenbankaufruf den jeweiligen Filter berücksichtigen muss
@@ -211,7 +282,8 @@ class ilTaskListGUI
         }
         if($bool_buffer)
         {
-            return ' AND startdate <='.$ilDB->quote(time(),"integer");
+            $date = date("Y-m-d",time());
+            return ' AND startdate <='.$ilDB->quote($date,"text");
         }else
         {
             return "";
@@ -281,7 +353,7 @@ class ilTaskListGUI
         {
             $bool_buffer=$record['are_finished_shown'];
         }
-
+        
         if($bool_buffer)
         {
             return ' AND edit_status='.$ilDB->quote(0,"integer");
@@ -298,6 +370,7 @@ class ilTaskListGUI
         if(isset($parameter))
         {
             $wert= $this->table_gui->filter[$parameter];
+            $parameter=str_replace($this->objid,"",$parameter);
             if($wert == 0)
             {
                 return '';
@@ -317,12 +390,13 @@ class ilTaskListGUI
     }
     //------------------------------------------------------------------------------------------------------------------
     //Filter einstellung für ein Textfeld
-    function TextFilter($parameter)
+    private function TextFilter($parameter)
     {
         global $ilDB;
         if($this->table_gui->filter[$parameter] != '')
         {
             $string=mysql_escape_string ( $this->table_gui->filter[$parameter] );
+            $parameter=str_replace($this->objid,"",$parameter);
             return " AND ". $parameter ." LIKE ". $ilDB->quote('%'.$string.'%',"text");
         }else
         {
@@ -338,6 +412,7 @@ class ilTaskListGUI
         {
             global $ilUser;
             $integer=mysql_escape_string ( $this->table_gui->filter[$parameter] );
+            $parameter=str_replace($this->objid,"",$parameter);
             return " AND ". $parameter ." = ". $ilDB->quote($ilUser->getUserIdByLogin($integer),"integer");
         }else
         {
@@ -360,7 +435,7 @@ class ilTaskListGUI
             $startdate = $startdate->getUnixTime();
             $enddate = $enddate->getUnixTime();
 
-
+            $parameter=str_replace($this->objid,"",$parameter);
             if($startdate != 0 AND $enddate != 0)
             {
                 $startdate = date("Y-m-d",$startdate);
@@ -379,28 +454,6 @@ class ilTaskListGUI
         }
     }
 //----------------------------------------------------------------------------------------------------------------------
-//Funktionen für die Ausgabe der Status Spalte
-
-    //Bestimmung welche Bilder ausgegeben müssen (abhängig davon ob der Statusändern Button aktiv ist)
-    protected function getWorkStatus($edit_status,$id)
-    {
-        if($edit_status)
-        {
-            if($this->getWorkStatusMode())
-            {
-                return $this->getOkIconImage();
-            }
-            return $this->getOkIcon($id);
-        }
-        else
-        {
-            if($this->getWorkStatusMode())
-            {
-                return $this->getNotOkIconImage();
-            }
-            return $this->getNotOkIcon($id);
-        }
-    }
 
     protected function getWorkStatusMode()
     {
@@ -411,72 +464,7 @@ class ilTaskListGUI
         }
         return false;
     }
-    //------------------------------------------------------------------------------------------------------------------
-    //Rückgabe der Grafiken in Form eines image
-    //Endung Image ist der Fall falls kein Button aktiv ist
-    protected function getOkIconImage()
-    {
-        return "<img heigth='".$this->heigthAndWidth."' width='".$this->heigthAndWidth."' src=\"Customizing/global/plugins/Services/Repository/RepositoryObject/Todolists/templates/images/icon_ok.svg\">";
-    }
 
-    protected function getNotOkIconImage()
-    {
-        $src_not_ok="Customizing/global/plugins/Services/Repository/RepositoryObject/Todolists/templates/images/icon_not_ok.svg";
-        $src_ok="Customizing/global/plugins/Services/Repository/RepositoryObject/Todolists/templates/images/icon_ok.svg";
-        $src_mouseover="Customizing/global/plugins/Services/Repository/RepositoryObject/Todolists/templates/images/icon_mouseover.svg";
-        if(!$this->object_tasklist->getShowEditStatusButton())return "<img heigth='".$this->heigthAndWidth."' width='".$this->heigthAndWidth."' src='".$src_not_ok."' onmouseover=\"src='". $src_mouseover."'\" onmouseout=\"src='".$src_not_ok."'\" />";
-        else return "<img heigth='".$this->heigthAndWidth."' width='".$this->heigthAndWidth."' src='".$src_not_ok."'/>";
-    }
-
-    protected function getOkIcon($id)
-    {
-        $image=$this->getOkIconImage();
-        $link=$this->getLink(1,$id);
-        return '<a id="green" href="' . $link . '"> '.$image.'</a>';
-    }
-
-    protected function getNotOkIcon($id)
-    {
-        $image=$this->getNotOkIconImage();
-        $link=$this->getLink(0,$id);
-        return '<a id="red" href="' . $link . '"> '.$image.'</a>';
-    }
-    //------------------------------------------------------------------------------------------------------------------
-    //holt sich den benötigten Link für die Statusbilder um eine weiterleitung zu veranlassen
-    protected function getLink($mode,$id)
-    {
-        $link = $_SERVER["REQUEST_URI"];
-        $zeichen_eins = strpos($link, 'cmd');
-        $zeichen_zwei = strpos($link, '&', $zeichen_eins);
-
-        // 0 -> rot 1-> grün
-        if($mode == 0 OR $mode == 1)
-        {
-            return substr_replace($link, 'changestatus&id=' . $id . '&status='.$mode, $zeichen_eins + 4, $zeichen_zwei - $zeichen_eins - 4);
-        }
-
-    }
-    //------------------------------------------------------------------------------------------------------------------
-    //Gibt den Status ändern Button zurück
-    protected function setChangeButton($id,$status)
-    {
-        global $lng,$ilCtrl;
-        $ilCtrl->setParameterByClass('ilObjTodolistsGUI', "id",$id);
-        $alist = new ilAdvancedButtonGUI();
-        $alist->setId($id);
-
-        $first_link= $ilCtrl->getLinkTargetByClass('ilObjTodolistsGUI', 'changestatus');
-
-        $id_pos=strpos($first_link,'&');
-        $second_link=substr($first_link,$id_pos);
-        $first_link=substr($first_link,0,$id_pos);
-        $link= $first_link.'&status='.$status.$second_link;
-
-        $alist->setListTitle($lng->txt("change"));
-        $alist->addItem($lng->txt('edit'), 'changestatus',$link);
-        return $alist->getHTML();
-    }
-//----------------------------------------------------------------------------------------------------------------------
 //Datenbank Funktionen
 
 
@@ -517,7 +505,7 @@ class ilTaskListGUI
             foreach($this->columns as $column)
             {
 
-                if ($column['type'] == "text" AND $column['sort_and_filter'] != 'attechedto' AND $column['sort_and_filter'] != 'created_by' AND $column['sort_and_filter'] != 'updated_by' ) {
+                if ($column['type'] == "text" AND $column['sort_and_filter'] != 'attechedto'.$this->objid AND $column['sort_and_filter'] != 'created_by'.$this->objid AND $column['sort_and_filter'] != 'updated_by'.$this->objid ) {
                     $filter_title = $this->TextFilter($column['sort_and_filter']);
                     $sql_string = $sql_string . $filter_title;
                 }
@@ -542,42 +530,14 @@ class ilTaskListGUI
 
     }
 
+
+
     function setDBdata($sql_string)
     {
-        global $ilDB;
-        $allData=array();
-
-        if($sql_string != '') {
-
-
-            $result = $ilDB->query($sql_string);
-            while ($record = $ilDB->fetchAssoc($result)) {
-
-
-                if (isset($record['enddate']))
-                {
-                    $enddate_time_stamp = strtotime( $record['enddate'] );
-                    $record['enddate'] = $this->formatDate($record['enddate']);
-                    if ($this->object_tasklist->getEnddateWarning() AND $enddate_time_stamp < time()) {
-                        $record['enddate'] = $this->changeDate($record['enddate']);
-                    }
-                }
-
-                if (isset($record['startdate'])) {
-                    $record['startdate'] = $this->formatDate($record['startdate']);
-                }
-
-
-
-                $edit_status = $record['edit_status'];
-                $record['edit_status'] = $this->getWorkStatus($record['edit_status'], $record['id']);
-
-                $record=$this->preDataSorted($record,$edit_status,"Tasklist");
-                $sorted_record=$this->getDataSorted($record,$edit_status);
-                array_push($allData, $sorted_record);
-            }
-            $this->setDataFromDb($allData);
-        }
+        $edit_acces=$this->getWorkStatusMode();
+        $tasks= new ilTaskGUI($sql_string,$this->object_tasklist,$this->taskListRefId,$this->table_id,$this->objid,$this->direction_array,$edit_acces);
+        $task=$tasks->getTasks();
+        $this->setDataFromDb($task);
     }
 
     function getSqlString()
@@ -599,245 +559,6 @@ class ilTaskListGUI
 
         return $sql_string;
     }
-//----------------------------------------------------------------------------------------------------------------------
-// Daten sortieren und verändern
-
-    protected function getWorkListNameWithTaskId($task_id)
-    {
-        global $ilDB;
-
-        $sql_buffer = "SELECT objectid FROM rep_robj_xtdo_tasks WHERE id = " . $ilDB->quote($task_id, "integer");
-        $result = $ilDB->query($sql_buffer);
-        while ($record = $ilDB->fetchAssoc($result)) {
-            $object_id = $record["objectid"];
-        }
-
-        $sql_buffer = "SELECT namen FROM rep_robj_xtdo_data WHERE id = " . $ilDB->quote($object_id, "integer");
-        $result = $ilDB->query($sql_buffer);
-        while ($record = $ilDB->fetchAssoc($result)) {
-            $name = $record["namen"];
-        }
-
-        $ownname = $this->SqlSelectQueryOneValue('namen');
-
-        if($name != $ownname)
-        {
-            //return $name." (ID = ".$object_id.")";
-            return $name;
-        }
-        return '';
-
-    }
-
-    protected function changeDate($date)
-    {
-        if($this->object_tasklist->getEnddateCursive())
-        {
-            $date='<i>'.$date.'</i>';
-        }
-        if($this->object_tasklist->getEnddateFat())
-        {
-            $date='<b>'.$date.'</b>';
-        }
-
-
-        $css="<style>
-        .enddate
-        {
-            color: #".$this->object_tasklist->getEnddateColor()." ;
-        }
-     </style>";
-
-
-        $date=$css.'<span class="enddate">'.$date.'</span>';
-
-        return $date;
-    }
-
-    protected function timestampInDate($timestamp)
-    {
-        if ($timestamp != 0) {
-            $timestamp = date('d.m.Y', $timestamp);
-        } else {
-            $timestamp = ' ';
-        }
-        return $timestamp;
-    }
-
-
-
-
-
-
-
-    protected function getPath($id)
-    {
-        global $ilDB;
-        $sql_buffer = "SELECT objectid FROM rep_robj_xtdo_tasks WHERE id = " . $ilDB->quote($id, "integer");
-        $result = $ilDB->query($sql_buffer);
-        while ($record = $ilDB->fetchAssoc($result)) {
-            $object_id = $record["objectid"];
-        }
-
-        $sql_string="SELECT path FROM rep_robj_xtdo_data WHERE id = ".$ilDB->quote($object_id,"integer");
-        $result = $ilDB->query($sql_string);
-        while ($record = $ilDB->fetchAssoc($result))
-        {
-            $wert=$record["path"];
-        }
-        return $wert;
-    }
-
-
-    protected function getLinkRefId($obj_id)
-    {
-        global $ilDB;
-        $sql_string="SELECT ref_id FROM object_reference WHERE obj_id = ".$ilDB->quote($obj_id,"integer");
-        $result = $ilDB->query($sql_string);
-        while ($record = $ilDB->fetchAssoc($result))
-        {
-            $wert = $record["ref_id"];
-        }
-        return $wert;
-    }
-
-    protected function getObjectIdWithTaskId($task_id)
-    {
-        global $ilDB;
-        $sql_buffer = "SELECT objectid FROM rep_robj_xtdo_tasks WHERE id = " . $ilDB->quote($task_id, "integer");
-        $result = $ilDB->query($sql_buffer);
-        while ($record = $ilDB->fetchAssoc($result)) {
-            $object_id = $record["objectid"];
-        }
-        return $object_id;
-    }
-
-
-    protected function getDataSorted($record,$edit_status)
-    {
-        global $ilUser;
-        $sorted_record = array();
-        foreach ($record as $key => $value) {
-
-            switch ($key)
-            {
-                case "tasks":
-                    if(!$this->object_tasklist->getStatusPosition() AND $this->object_tasklist->getShowEditStatusButton())$sorted_record["fertig"]=$record["fertig"];
-                    $sorted_record[$key] = $value;
-                    break;
-                case "edit_status":
-                    if($this->object_tasklist->getStatusPosition() AND $this->object_tasklist->getIsCollectlist())$sorted_record["attechedto"]=$record["attechedto"];
-                    $sorted_record[$key] = $value;
-                    break;
-                default:
-                    $sorted_record[$key] = $value;
-            }
-
-        }
-        return $sorted_record;
-    }
-
-    function getWorklistLinkForCollectlist($id)
-    {
-        $worklistname=$this->getPath($id).'->'.$this->getWorkListNameWithTaskId($id);
-        $ref_id=$this->getLinkRefId($this->getObjectIdWithTaskId($id));
-
-
-        $add_link = $_SERVER["REQUEST_URI"];
-        $add_link =substr($add_link,strpos($add_link,"cmdNode=")+8);
-
-
-        $link="ilias.php?ref_id=".$ref_id."&cmd=showContent&cmdClass=ilobjtodolistsgui&cmdNode=".$add_link;
-        if($this->getWorkListNameWithTaskId($id) != "" OR $this->getWorkListNameWithTaskId($id) != NULL)
-            return "<a href='".$link."'>".$worklistname."<a>";
-        else return "";
-    }
-
-    function setMoreCounter($a_value)
-    {
-        $this->moreCounter=$a_value;
-    }
-    function getMoreCounter()
-    {
-        return $this->moreCounter;
-    }
-    function preDataSorted($record,$edit_status,$table_id)
-    {
-        global $ilUser;
-        $sorted_record = array();
-        foreach ($record as $key => $value) {
-
-            switch ($key)
-            {
-                case "created_by":
-                    $sorted_record[$key] = $ilUser->getLoginByUserId($value);
-                    break;
-                case "updated_by":
-                    $sorted_record[$key] = $ilUser->getLoginByUserId($value);
-                    break;
-                case "id":
-                    $sorted_record[$key] = $value;
-                    if ($this->object_tasklist->getShowEditStatusButton()) $sorted_record['fertig'] = $this->setChangeButton($value, $edit_status);
-                    if ($this->object_tasklist->getIsCollectlist())$sorted_record["attechedto"]=$this->getWorklistLinkForCollectlist($value);
-                    break;
-                case "description":
-                    if(strlen($record[$key]) > 100)
-                    {
-
-
-
-                        $pos = strripos($record[$key]," ");
-                        if($pos==false)$pos=100;
-                        $string=substr($record[$key],0,100);
-                        $pos = strripos($string," ");
-                        if($pos==false)$pos=100;
-                        $string=substr($record[$key],0,$pos+1);
-
-                        $in=str_replace(" ","_",$table_id.$this->getMoreCounter());
-                        $in=str_replace("[","",$in);
-                        $in=str_replace("]","",$in);
-
-
-                        $link_mehr='<a onClick="changeMehr(\'all_'.$in.'\',\'weniger_'.$in.'\')">...weiter lesen.</a>';
-                        $link_weniger='<a onClick="changeWeniger(\'all_'.$in.'\',\'weniger_'.$in.'\')"> ...zuklappen.</a>';
-                        $string=$string.$link_mehr;
-                        $div="<div id = 'more_".$in."'>
-                                <div id = 'weniger_".$in."'>".$string."</div>
-                                <div id = 'all_".$in."'>".$record[$key].$link_weniger."</div>
-                              </div>";
-                        $css="<style>
-                            #all_".$in."
-                            {
-                                display: none;
-                            }
-                        </style>";
-                        $string=$css.$div;
-                        $sorted_record[$key]=$string;
-                        $counter=$this->getMoreCounter();
-                        $this->setMoreCounter($counter+1);
-                    }
-                    else $sorted_record[$key] = $value;
-                    break;
-                default:
-                    $sorted_record[$key] = $value;
-            }
-
-        }
-        return $sorted_record;
-    }
-
-
-
-
-    function formatDate($date)
-    {
-        return $this->timestampInDate(strtotime($date));
-    }
-
-
-
-
-
 //----------------------------------------------------------------------------------------------------------------------
 //Sonstige
 
