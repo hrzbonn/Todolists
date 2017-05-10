@@ -59,8 +59,13 @@ class ilObjTodolistsAccess extends ilObjectPluginAccess
 			$a_user_id = $ilUser->getId();
 		}
 
-
-
+		global $objDefinition;
+		if (isset($objDefinition->obj_data))
+		{
+			$objDefinition->obj_data['xtdo']['allow_copy'] = 1;
+		}
+		
+		
 		switch ($a_permission) {
 			case "read":
 				if (!ilObjTodolistsAccess::checkOnline($a_obj_id) &&
@@ -129,9 +134,10 @@ class ilObjTodolistsAccess extends ilObjectPluginAccess
 				OR operation = %s
 				OR operation = %s
 				OR operation = %s
+				OR operation = %s
 				OR operation = %s',
-			array('text', 'text', 'text', 'text', 'text', 'text', 'text'),
-			array('visible', 'read', 'write', 'delete', 'edit_content', 'add_entry', 'edit_permission'));
+			array('text', 'text', 'text', 'text','text', 'text', 'text', 'text'),
+			array('visible', 'read', 'write','copy', 'delete', 'edit_content', 'add_entry', 'edit_permission'));
 
 		while ($row_1 = $ilDB->fetchAssoc($res_1)) {
 			$xtodo_ops_ids[$row_1['operation']] = (int)$row_1['ops_id'];
