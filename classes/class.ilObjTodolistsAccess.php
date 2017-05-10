@@ -59,8 +59,13 @@ class ilObjTodolistsAccess extends ilObjectPluginAccess
 			$a_user_id = $ilUser->getId();
 		}
 
-
-
+		global $objDefinition;
+		if (isset($objDefinition->obj_data))
+		{
+			$objDefinition->obj_data['xtdo']['allow_copy'] = 1;
+		}
+		
+		
 		switch ($a_permission) {
 			case "read":
 				if (!ilObjTodolistsAccess::checkOnline($a_obj_id) &&
