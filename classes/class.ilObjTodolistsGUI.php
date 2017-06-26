@@ -1051,14 +1051,17 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 
 	function versionBigger52()
 	{
-		//prüfe ob Version größer 51 wenn nicht gibt true zurück um alte Funktionen aufzurufen
-		//#TODO:Richtige Versionskontrolle einbauen
+		//prüfe ob Version größer 5.2.0 wenn nicht gibt true zurück um alte Funktionen aufzurufen
 		global $ilSetting;
-		if(strpos($ilSetting->get("ilias_version"),"2.0") == false)
+		$version=$ilSetting->get("ilias_version");
+		$version=str_replace(" ","-",$version);
+		$pos=strpos($version,"-");
+		if($pos!=false)$version=substr($version,0,$pos);
+		if(version_compare($version, "5.2.0", ">="))
 		{
-			return true;
+			return false;
 		}
-		else return false;
+		else return true;
 	}
 
 	function getTodosValues()
