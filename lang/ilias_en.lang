@@ -147,3 +147,8 @@ show_description#:#Show description
 show_description_info#:#Activates a column in the table where the description of the task is being shown.
 show_enddate#:#Show end date
 show_enddate_info#:#Activates a column in the table where the end date of the task is being shown.
+
+
+xtdo_copy#:#Copy Todolist
+rbac_create_xtdo#:#Create Todolist
+obj_xtdo#:#Todolist

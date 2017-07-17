@@ -148,3 +148,8 @@ show_description#:#Beschreibung anzeigen
 show_description_info#:#Aktiviert eine Spalte in der Tabelle, in welcher die Beschreibung der Aufgabe ausgegeben wird
 show_enddate#:#Enddatum anzeigen
 show_enddate_info#:#Aktiviert eine Spalte in der Tabelle, in welcher das Enddatum der Aufgabe ausgegeben wird
+
+
+xtdo_copy#:#Todoliste kopieren
+rbac_create_xtdo#:#Todoliste erstellen
+obj_xtdo#:#Todoliste
