@@ -1819,7 +1819,7 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 		$user = $ilUser->getid();
 
 		global $ilDB;
-		$sql_buffer="SELECT id FROM rep_robj_xtdo_milsto WHERE milestone = ".$ilDB->quote($form_input['milestone'],"text");
+		$sql_buffer="SELECT id FROM rep_robj_xtdo_milsto WHERE milestone = ".$ilDB->quote($form_input['milestone'],"text")." AND objectid=".$ilDB->quote($this->object_id,"integer");
 		$result = $ilDB->query($sql_buffer);
 		$count = 0;
 		while ($record = $ilDB->fetchAssoc($result))
