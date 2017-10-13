@@ -53,7 +53,6 @@ class ilObjTodolistsAccess extends ilObjectPluginAccess
 	function _checkAccess($a_cmd, $a_permission, $a_ref_id, $a_obj_id, $a_user_id = "")
 	{
 		global $ilUser, $ilAccess;
-		self::checkObjectOperationPermissionsInitialized();
 
 		if ($a_user_id == "") {
 			$a_user_id = $ilUser->getId();
@@ -94,66 +93,6 @@ class ilObjTodolistsAccess extends ilObjectPluginAccess
 		);
 		$rec = $ilDB->fetchAssoc($set);
 		return (boolean)$rec["is_online"];
-	}
-
-	private static function checkObjectOperationPermissionsInitialized()
-	{
-		/**
-		 * @var $ilDB ilDB
-		 */
-		global $ilDB;
-
-		// lookup obj_id of xavc type definition
-		$xtodo_typ_id = 0;
-		$res = $ilDB->queryF("SELECT obj_id FROM object_data WHERE type = %s AND title = %s",
-			array('text', 'text'), array('typ', 'xtdo'));
-		while ($row = $ilDB->fetchObject($res)) {
-			$xtodo_typ_id = (int)$row->obj_id;
-			#break;
-		}
-
-
-		//check initialized permissions
-		$check = $ilDB->queryF('SELECT ops_id FROM rbac_ta WHERE typ_id = %s',
-			array('integer'), array($xtodo_typ_id));
-
-		$init_ops = array();
-		while ($row = $ilDB->fetchAssoc($check)) {
-			$init_ops[] = $row['ops_id'];
-		}
-
-
-		//insert or update additional permissions for object type
-		// general permissions: visible, read, write, delete, copy
-		$xtodo_ops_ids = array();
-		$res_1 = $ilDB->queryF('
-				SELECT ops_id, operation FROM rbac_operations
-				WHERE operation = %s
-				OR operation = %s
-				OR operation = %s
-				OR operation = %s
-				OR operation = %s
-				OR operation = %s
-				OR operation = %s
-				OR operation = %s',
-			array('text', 'text', 'text', 'text','text', 'text', 'text', 'text'),
-			array('visible', 'read', 'write','copy', 'delete', 'edit_content', 'add_entry', 'edit_permission'));
-
-		while ($row_1 = $ilDB->fetchAssoc($res_1)) {
-			$xtodo_ops_ids[$row_1['operation']] = (int)$row_1['ops_id'];
-		}
-
-		foreach ($xtodo_ops_ids as $x_operation => $x_id) {
-			if (!in_array($x_id, $init_ops)) {
-				//insert missing operation
-				$ilDB->insert('rbac_ta',
-					array(
-						'typ_id' => array('integer', $xtodo_typ_id),
-						'ops_id' => array('integer', $x_id)
-					));
-			}
-		}
-		return $xtodo_typ_id;
 	}
 	
 	
