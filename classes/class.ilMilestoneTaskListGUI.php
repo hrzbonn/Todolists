@@ -39,7 +39,7 @@ class ilMilestoneTaskListGUI extends ilTaskListGUI
 
         if ($ilAccess->checkAccess("edit_content", "",$ref_id ))
         {
-            $this->mytablegui->addActionButton();
+            $this->mytablegui->addOwnActionButton();
         }
 
 
@@ -305,10 +305,8 @@ class ilMilestoneTaskListGUI extends ilTaskListGUI
             if($this->object->getIsCollectlist())$sql_string=$sql_string.$this->addIdsForCollectListAtString($this->getIdsForCollectTheirTasks());
             $sql_string=$sql_string.$this->noFilterAddString();
             $sql_string=$sql_string.$this->notAtStartdate();
-            echo "FALSE";
         }else
         {
-            echo "TRUEsfadsfsd";
             $i=0;
             if($this->object->getIsCollectlist())$sql_string=$this->CollectListFilter('attechedto',$sql_string);
             $sql_string=$sql_string.$this->notAtStartdateFilter();

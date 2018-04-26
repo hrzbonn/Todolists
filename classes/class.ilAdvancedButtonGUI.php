@@ -821,11 +821,9 @@ class ilAdvancedButtonGUI
 			$cfg["toggle_el"] = $toggle["el"];
 			$cfg["toggle_class_on"] = $toggle["class_on"];
 		}
-//echo "<br>".htmlentities($this->getAsynchUrl());
 		include_once("./Services/JSON/classes/class.ilJsonUtil.php");		  
 		$tpl->setVariable("CFG", ilJsonUtil::encode($cfg));		 
-		 
-		//echo htmlentities(ilJsonUtil::encode($cfg));	
+			
 		
 		$tpl->setVariable("TXT_SEL_TOP", $this->getListTitle());
 		$tpl->setVariable("ID", $this->getId());

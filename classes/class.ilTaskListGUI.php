@@ -52,7 +52,7 @@ class ilTaskListGUI
         //Wenn User das Recht Edit_contet besitzt wird ein bearbeitungs und löschen Button in die Tabelle hinzugefügt 
         if ($ilAccess->checkAccess("edit_content", "",$ref_id ))
         {
-            $this->table_gui->addActionButton();
+            $this->table_gui->addOwnActionButton();
         }
 
         $this->table_gui->setIsCalledByClass('ilObjTodolistsGUI');

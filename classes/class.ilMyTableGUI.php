@@ -226,7 +226,7 @@ include_once ("./Services/Form/classes/class.ilDateDurationInputGUI.php");
     //------------------------------------------------------------------------------------------------------------------
 
     //Fügt einen Actionbutton zur Tabelle hinzu für das Bearbeiten und Löschen einer Zeile
-    function addActionButton()
+    function addOwnActionButton()
     {
         $this->actionbutton_exists=true;
     }
