@@ -152,3 +152,8 @@ show_enddate_info#:#Activates a column in the table where the end date of the ta
 xtdo_copy#:#Copy Todolist
 rbac_create_xtdo#:#Create Todolist
 obj_xtdo#:#Todolist
+
+save_settings#:#Save and redirect to Settings
+collectionlist#:#It is only here possible to declare a list as collectionlist.
+firstsettings#:#For switching the list online, please go to the settings after saving.
+attention#:#Attention:

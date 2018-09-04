@@ -91,6 +91,7 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 		{
 			case "firststart":
 			case "updatefirststart":
+			case "updateandredirect":
 			case "editProperties":		// list all commands that need write permission here
 			case "updateProperties":
 			case "milestone":
@@ -215,34 +216,37 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 		$ilDB->manipulate("UPDATE rep_robj_xtdo_data SET path = ".$ilDB->quote($this->getPath(), "text") . " WHERE id = " . $ilDB->quote($this->object_id, "integer"));
 
 
-		$ilTabs->activateTab("properties");
+		$ilTabs->activateTab("test");
 		$this->initfirststart();
 		$this->getfirststartValues();
-		$tpl->setContent($this->form->getHTML());
+		$tpl->setContent("<b>".$this->txt("attention")."</b> ".$this->txt("collectionlist")."<br>".$this->txt("firstsettings").$this->form->getHTML());
 	}
 	
 	public function initfirststart()
 	{
-		global $ilCtrl;
+		global $ilCtrl,$tpl;
 
+		
 		include_once("Services/Form/classes/class.ilPropertyFormGUI.php");
 		$this->form = new ilPropertyFormGUI();
 
+		
 		// title
 		$ti = new ilTextInputGUI($this->txt("title"), "title");
 		$ti->setRequired(true);
 		$this->form->addItem($ti);
+		
 
 		// description
 		$ta = new ilTextAreaInputGUI($this->txt("description"), "desc");
 		$this->form->addItem($ta);
-
 
 		$ti = new ilCheckboxInputGUI($this->txt("is_collectlist"), "is_collectlist");
 		$ti->setInfo($this->txt('is_collectlist_info'));
 		$this->form->addItem($ti);
 
 		$this->form->addCommandButton("updatefirststart", $this->txt("save"));
+		$this->form->addCommandButton("updateandredirect", $this->txt("save_settings"));
 
 		$this->form->setTitle($this->txt("first_start"));
 		$this->form->setFormAction($ilCtrl->getFormAction($this));
@@ -274,7 +278,31 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 		$this->form->setValuesByPost();
 		$tpl->setContent($this->form->getHtml());
 	}
+	
+	
+	public function updateandredirect()
+	{
+		global $tpl, $lng, $ilCtrl;
 
+		$this->initPropertiesForm();
+		if ($this->form->checkInput())
+		{
+			$this->object->setTitle($this->form->getInput("title"));
+			$this->object->setDescription($this->form->getInput("desc"));
+			$this->object->setIsCollectlist($this->form->getInput("is_collectlist"));
+			$this->object->update();
+			ilUtil::sendSuccess($lng->txt("msg_obj_modified"), true);
+			$ilCtrl->redirect($this, "editProperties");
+		}
+
+		$this->form->setValuesByPost();
+		$tpl->setContent($this->form->getHtml());
+	}
+	
+	
+	
+	
+	
 
 //--------------------------------------------------------------------------------------------------------------------------------
 	function edit_row_milestone()

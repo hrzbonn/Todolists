@@ -153,3 +153,9 @@ show_enddate_info#:#Aktiviert eine Spalte in der Tabelle, in welcher das Enddatu
 xtdo_copy#:#Todoliste kopieren
 rbac_create_xtdo#:#Todoliste erstellen
 obj_xtdo#:#Todoliste
+
+
+save_settings#:#Speichern und zu Einstellungen weiterleiten
+collectionlist#:#Nur an dieser Stelle ist es möglich eine Liste als Sammelliste zu deklarieren.
+firstsettings#:#Zum Online schalten der Liste bitte nach dem Speichern die Einstellungen aufrufen.
+attention#:#Achtung:
