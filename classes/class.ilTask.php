@@ -29,7 +29,7 @@ class ilTask
          $this->collect_list_link="";
          $this->button="";
     }
-    
+
     function setButton($value)
     {
         $this->button=$value;
@@ -95,8 +95,16 @@ class ilTask
             $in=str_replace("]","",$in);
 
 
-            $link_mehr='<a onClick="changeMehr(\'all_'.$in.'\',\'weniger_'.$in.'\')">...weiter lesen.</a>';
-            $link_weniger='<a onClick="changeWeniger(\'all_'.$in.'\',\'weniger_'.$in.'\')"> ...zuklappen.</a>';
+            $link_mehr='<a onClick="(function(){
+              document.getElementById(\'all_'.$in.'\').style.display= \'inline\';
+              document.getElementById(\'weniger_'.$in.'\').style.display= \'none\';
+            })();">...weiter lesen.</a>';
+            
+            $link_weniger='<a onClick="(function(){
+              document.getElementById(\'all_'.$in.'\').style.display=  \'none\';
+              document.getElementById(\'weniger_'.$in.'\').style.display= \'inline\';
+            })();"> ...zuklappen.</a>';
+
             $string=$string.$link_mehr;
             $div="<div id = 'more_".$in."'>
                                 <div id = 'weniger_".$in."'>".$string."</div>

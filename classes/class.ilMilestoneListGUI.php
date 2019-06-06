@@ -16,7 +16,7 @@ class ilMilestoneListGUI
     private $data;
     private $objid;
     private $object;
-    
+
     function __construct($table_name,$object,$objectid,$columnnames)
     {
         $this->setTemplatePath('/Customizing/global/plugins/Services/Repository/RepositoryObject/Todolists');
@@ -29,7 +29,7 @@ class ilMilestoneListGUI
         $this->object=$object;
 
         $this->myTableGui = new ilMyTableGUI($this,$this->getParentCmd(),$this->getTemplatePath(),$this->getTemplateName(),$this->getPluginName(),$this->getTableId());
-        $this->myTableGui->setFilterCommand("applyMilestoneListFilter"); 
+        $this->myTableGui->setFilterCommand("applyMilestoneListFilter");
         $this->myTableGui->setResetCommand("resetMilestoneListFilter");
         $this->myTableGui->setIsCalledByClass('ilObjTodolistsGUI');
         $this->myTableGui->setTableTitle($table_name);
@@ -37,15 +37,15 @@ class ilMilestoneListGUI
         $this->getProgressActual();
         $this->setColumns();
         $this->myTableGui->initFilter();
-        
+
     }
-    
+
     function getHtml()
     {
         $this->setData();
         $this->myTableGui->setData($this->getData());
         $table=$this->myTableGui->getTableHTMLCODE();
-        
+
         return $table;
     }
 
@@ -61,22 +61,22 @@ class ilMilestoneListGUI
         }
         return $ids;
     }
-    
+
 
     function getProgressActual()
     {
        global $ilDB;
        $ids=$this->getMilestoneIDs();
-       
+
        foreach($ids as $id)
        {
-        
+
             $sql_string="SELECT edit_status,tasks FROM rep_robj_xtdo_tasks WHERE milestone_id = ". $id;
             $result = $ilDB->query($sql_string);
-            
+
             $fertig=0;
             $unfertig=0;
-            
+
             while ($record = $ilDB->fetchAssoc($result))
             {
                if($record['edit_status'])
@@ -85,7 +85,7 @@ class ilMilestoneListGUI
                }else
                {
                     $unfertig++;
-               }               
+               }
             }
             $insgesamt=$fertig+$unfertig;
             if($insgesamt == 0)
@@ -94,10 +94,10 @@ class ilMilestoneListGUI
                 $insgesamt=1;
             }
             $prozent=round( ($fertig/$insgesamt)*100, 0, PHP_ROUND_HALF_UP);
-            $ilDB->query("UPDATE rep_robj_xtdo_milsto SET progress=" . $ilDB->quote($prozent, "integer") . " WHERE id=" . $ilDB->quote($id, "integer"));      
+            $ilDB->query("UPDATE rep_robj_xtdo_milsto SET progress=" . $ilDB->quote($prozent, "integer") . " WHERE id=" . $ilDB->quote($id, "integer"));
        }
     }
-    
+
     function applyFilter()
     {
         global $ilCtrl;
@@ -291,7 +291,7 @@ class ilMilestoneListGUI
                 $sql_string = $sql_string . $filter_title;
             }
         }
-        
+
         $result = $ilDB->query($sql_string);
         $daten=array();
         while ($record = $ilDB->fetchAssoc($result))
@@ -413,8 +413,17 @@ class ilMilestoneListGUI
                         $pos = strripos($string," ");
                         if($pos==false)$pos=100;
                         $string=substr($data[$key],0,$pos+1);
-                        $link_mehr='<a onClick="changeMehr(\'all_'.$this->getMoreCounter().'\',\'weniger_'.$this->getMoreCounter().'\')">...weiter lesen.</a>';
-                        $link_weniger='<a onClick="changeWeniger(\'all_'.$this->getMoreCounter().'\',\'weniger_'.$this->getMoreCounter().'\')"> ...zuklappen.</a>';
+
+                        $link_mehr='<a onClick="(function(){
+                          document.getElementById(\'all_'.$this->getMoreCounter().'\').style.display= \'inline\';
+                          document.getElementById(\'weniger_'.$this->getMoreCounter().'\').style.display= \'none\';
+                        })();">...weiter lesen.</a>';
+
+                        $link_weniger='<a onClick="(function(){
+                          document.getElementById(\'all_'.$this->getMoreCounter().'\').style.display=  \'none\';
+                          document.getElementById(\'weniger_'.$this->getMoreCounter().'\').style.display= \'inline\';
+                        })();"> ...zuklappen.</a>';
+
                         $string=$string.$link_mehr;
                         $div="<div id = 'more_".$this->getMoreCounter()."'>
                                 <div id = 'weniger_".$this->getMoreCounter()."'>".$string."</div>
@@ -570,7 +579,7 @@ class ilMilestoneListGUI
     function progressInPercentbar($progress)
     {
         $fertig_percent = round($progress, 0, PHP_ROUND_HALF_UP);
-        
+
         $px_percent = (85 / 100) * $fertig_percent;
         $width_green = $px_percent . '%';
         $red_percent = 85 - $px_percent;
@@ -587,17 +596,17 @@ class ilMilestoneListGUI
     {
         return $this->data;
     }
-    
+
     function setObjectId($value)
     {
         $this->objid=$value;
     }
-    
+
     function getObjectId()
     {
         return $this->objid;
     }
-    
+
     private function getColumns()
     {
         return $this->columns;
@@ -654,12 +663,12 @@ class ilMilestoneListGUI
     {
         $this->columnnames=$value;
     }
-    
+
     private function getColumnNames()
     {
         return $this->columnnames;
     }
-    
+
     private function setTableId($value)
     {
         $this->tableId=$value;

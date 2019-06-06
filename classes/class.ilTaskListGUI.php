@@ -1,4 +1,3 @@
-
 <?php
 
 //Externe Dateien einbinden
@@ -49,7 +48,7 @@ class ilTaskListGUI
         $this->direction_array=array();
         $this->column_name_array=$column_name_array;
 
-        //Wenn User das Recht Edit_contet besitzt wird ein bearbeitungs und löschen Button in die Tabelle hinzugefügt 
+        //Wenn User das Recht Edit_contet besitzt wird ein bearbeitungs und löschen Button in die Tabelle hinzugefügt
         if ($ilAccess->checkAccess("edit_content", "",$ref_id ))
         {
             $this->table_gui->addOwnActionButton();
@@ -61,8 +60,8 @@ class ilTaskListGUI
 
         $this->setColumns();
         $this->table_gui->setColumns($this->columns);
-        
-        
+
+
         if($this->object_tasklist->getBeforeStartdateShown())
         {
             $ti = new ilCheckboxInputGUI($column_name_array[9], "extra_0");
@@ -353,7 +352,7 @@ class ilTaskListGUI
         {
             $bool_buffer=$record['are_finished_shown'];
         }
-        
+
         if($bool_buffer)
         {
             return ' AND edit_status='.$ilDB->quote(0,"integer");
@@ -569,6 +568,3 @@ class ilTaskListGUI
     }
 }
 ?>
-
-
-

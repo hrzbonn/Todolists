@@ -81,7 +81,7 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 	{
 		return "xtdo";
 	}
-	
+
 	/**
 	* Handles all commmands of this class, centralizes permission checks
 	*/
@@ -107,7 +107,7 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 				$this->checkPermission("write");
 				$this->$cmd();
 				break;
-			
+
 			case "applyFilter":
 			case "resetFilter":
 			case "applyMilestoneFilter":
@@ -221,21 +221,21 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 		$this->getfirststartValues();
 		$tpl->setContent("<b>".$this->txt("attention")."</b> ".$this->txt("collectionlist")."<br>".$this->txt("firstsettings").$this->form->getHTML());
 	}
-	
+
 	public function initfirststart()
 	{
 		global $ilCtrl,$tpl;
 
-		
+
 		include_once("Services/Form/classes/class.ilPropertyFormGUI.php");
 		$this->form = new ilPropertyFormGUI();
 
-		
+
 		// title
 		$ti = new ilTextInputGUI($this->txt("title"), "title");
 		$ti->setRequired(true);
 		$this->form->addItem($ti);
-		
+
 
 		// description
 		$ta = new ilTextAreaInputGUI($this->txt("description"), "desc");
@@ -251,7 +251,7 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 		$this->form->setTitle($this->txt("first_start"));
 		$this->form->setFormAction($ilCtrl->getFormAction($this));
 	}
-	
+
 	function getfirststartValues()
 	{
 		$values["title"] = $this->object->getTitle();
@@ -278,8 +278,8 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 		$this->form->setValuesByPost();
 		$tpl->setContent($this->form->getHtml());
 	}
-	
-	
+
+
 	public function updateandredirect()
 	{
 		global $tpl, $lng, $ilCtrl;
@@ -298,11 +298,11 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 		$this->form->setValuesByPost();
 		$tpl->setContent($this->form->getHtml());
 	}
-	
-	
-	
-	
-	
+
+
+
+
+
 
 //--------------------------------------------------------------------------------------------------------------------------------
 	function edit_row_milestone()
@@ -767,7 +767,7 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 	function editProperties()
 	{
 		global $tpl, $ilTabs;
-		
+
 		$ilTabs->activateTab("properties");
 		$this->initPropertiesForm();
 		$this->getPropertiesValues();
@@ -783,7 +783,7 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 	public function initPropertiesForm()
 	{
 		global $ilCtrl;
-	
+
 		include_once("Services/Form/classes/class.ilPropertyFormGUI.php");
 		$this->form = new ilPropertyFormGUI();
 		$this->form->setMultipart(true);
@@ -801,7 +801,7 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 		// description
 		$ta = new ilTextAreaInputGUI($this->txt("description"), "desc");
 		$this->form->addItem($ta);
-		
+
 		// online
 		$cb = new ilCheckboxInputGUI($this->lng->txt("online"), "online");
 		$this->form->addItem($cb);
@@ -968,15 +968,15 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 			{
 				$is_okay=true;
 			}
-			
-			
+
+
 			$this->object->setTitle($this->form->getInput("title"));
 			$this->object->setDescription($this->form->getInput("desc"));
 			$this->object->setAreFinishedShown($this->form->getInput("are_finished_shown"));
 			$this->object->setBeforeStartdateShown($this->form->getInput("before_startdate_shown"));
 			$this->object->setOnline($this->form->getInput("online"));
 			$this->object->setCollectlistid($this->form->getInput("collectlist"));
-			
+
 			$this->object->setEnddateWarning($this->form->getInput("enddate_warning"));
 			$this->object->setEnddateCursive($this->form->getInput("enddate_cursive"));
 			$this->object->setEnddateFat($this->form->getInput("enddate_fat"));
@@ -987,7 +987,7 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 			$this->object->SetShowStartDate($this->form->getInput("showstartdate"));
 			$this->object->SetShowDescription($this->form->getInput("showdescription"));
 			$this->object->SetShowEnddate($this->form->getInput("showenddate"));
-			
+
 			$this->object->setShowHidePercentBarOption($this->form->getInput("percent_bar"));
 			$this->object->setShowEditStatusButton($this->form->getInput("edit_status_checkbox"));
 			$this->object->setEditStatusPermission($this->form->getInput("edit_status_permission"));
@@ -1013,7 +1013,7 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 	//Setzt Form indem eine Aufgabe erstellt werden kann
 	//Zudem Funktionen welche Prüfen ob mehr Optionen angezeigt werden sollen zum spezifizieren der Aufgabe
 	//Sowie Bearbeitung des Inputs sowie schreiben der Daten in die Datenbank
-	
+
 	public function getMileStonesNames($array=array())
 	{
 		global $ilDB;
@@ -1022,13 +1022,13 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 
 		$result = $ilDB->query($sql_string);
         while ($record = $ilDB->fetchAssoc($result))
-        {          
+        {
             array_push($array,$record["milestone"]);
         }
 		return $array;
 	}
-	
-	
+
+
 	public function inittodosForm()
 	{
 		global $ilCtrl,$ilSetting;
@@ -1131,8 +1131,8 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 		}
 		return $values;
 	}
-	
-	
+
+
 	function getMilestoneIdWithName($milestone)
 	{
 		global $ilDB;
@@ -1140,11 +1140,11 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 		{
 			return 0;
 		}
-		
+
 		$sql_string="SELECT id FROM rep_robj_xtdo_milsto WHERE milestone =". $ilDB->quote($milestone,"text");
 		$result = $ilDB->query($sql_string);
         while ($record = $ilDB->fetchAssoc($result))
-        {          
+        {
             $milestone_id=$record["id"];
         }
 		return $milestone_id;
@@ -1166,24 +1166,24 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 		}
 		return $milestone_id;
 	}
-	
+
 	public function updatetodos($newTaskArray,$add_object_id)
 	{
 		global $ilDB;
 		global $ilUser;
 		$user = $ilUser->getid();
 		if(!empty($newTaskArray)) {
-			
+
 			$optionen=array($this->txt("nothing"));
 			$optionen=$this->getMileStonesNames($optionen);
-			
+
 			$option=$newTaskArray["milestone_task"];
 			if($newTaskArray["milestone_task"] == "" OR $newTaskArray["milestone_task"] == NULL)
 			{
 				$option=0;
 			}
-			
-			
+
+
 			$milestone_id=$this->getMilestoneIdWithNameAndObjectId($optionen[$option]);
 
 			if($newTaskArray["startdate"] != NULL)$startdate=date("Y-m-d",strtotime(str_replace('.', '-', $newTaskArray["startdate"]))); else $startdate = NULL;
@@ -1260,7 +1260,7 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 			foreach ($this->get_all_list_ids_for_collect_list() as $id)
 			{
 				$listname=str_replace(" ",'_',$this->getListNameWithId($id));
-				
+
 				$value[$listname]=$this->form->getInput($listname);
 
 				if($value[$listname]!=0)
@@ -1531,7 +1531,7 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 			}
 			$sql_string=$sql_string.' )';
 			$sql_string_fertig=$sql_string.' AND edit_status = ' . $ilDB->quote(1, "integer");
-		
+
 			if($count != 0) {
 				$result = $ilDB->query($sql_string);
 				$alle = $this->count_sql_result($result);
@@ -1567,17 +1567,6 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 		global $tpl, $ilTabs,$ilAccess;
 		$ilTabs->activateTab("content");
 
-		$java_script='<script>
-                        function changeMehr(IDMehr,IdWeniger) {
-                            document.getElementById(IDMehr).style.display= "inline"
-                            document.getElementById(IdWeniger).style.display= "none"
-                        }
-                        function changeWeniger(IDMehr,IdWeniger){
-                            document.getElementById(IDMehr).style.display=  "none"
-                            document.getElementById(IdWeniger).style.display= "inline"
-                        }</script>';
-		echo $java_script;
-
 
 		$html_content='';
 
@@ -1586,16 +1575,16 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 			$this->inittodosForm();
 			$html_content=$html_content.$this->form->getHTML();
 		}
-		
+
 		$html_content=$html_content.$this->showpercent();
 
 
 		$bufffer=$this->getTable();
 
 		$bufffer=$bufffer.$this->getMilestoneTable();
-		
-		
-		
+
+
+
 		$html_content=$html_content.$bufffer;
 
 
@@ -1736,7 +1725,7 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 		$table = new ilMilestoneTaskListGUI($meilenstein_id,$meilenstein_name,$columnnames,$optionen,$this->myRefId,$this->object_id,$this->object);
 		$table->resetMilestoneFilter();
 	}
-	
+
 	function getTable()
 	{
 		include_once ('class.ilTaskListGUI.php');
@@ -1935,19 +1924,8 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 		$ilTabs->activateTab("milestone");
 		include_once("class.ilMilestoneListGUI.php");
 
-		$java_script='<script>
-                        function changeMehr(IDMehr,IdWeniger) {
-                            document.getElementById(IDMehr).style.display= "inline"
-                            document.getElementById(IdWeniger).style.display= "none"
-                        }
-                        function changeWeniger(IDMehr,IdWeniger){
-                            document.getElementById(IDMehr).style.display=  "none"
-                            document.getElementById(IdWeniger).style.display= "inline"
-                        }</script>';
-		echo $java_script;
-		
-		
-		
+
+
 		$columnnames=array($this->txt("milestone"),$this->txt('startdate'),$this->txt('enddate'),$this->txt('description'),$this->txt('createdby'),$this->txt('updatedby'),
 			$this->txt('attached_to'),$this->txt("progress"));
 
@@ -1956,12 +1934,9 @@ class ilObjTodolistsGUI extends ilObjectPluginGUI
 
 		$this->initMilestoneForm();
 
-
-
 		$content=$this->form->getHTML();
 		$content=$content.$milestonetable->getHtml();
 		$tpl->setContent($content);
-
 
 	}
 
