@@ -1,5 +1,5 @@
 <?php
-/* Copyright (c) 1998-2009 ILIAS open source, Extended GPL, see docs/LICENSE */
+/* Copyright (c) 1998-2009 ILIAS open source, Extended GPL, see LICENSE */
 
 
 /**
@@ -18,10 +18,10 @@ class ilAdvancedButtonGUI
 	const ICON_ARROW = "caret";
 	const ICON_CONFIG = "glyphicon glyphicon-cog";
 	const NO_ICON = "";
-	
+
 	const MODE_LINKS = "links";
 	const MODE_FORM_SELECT = "select";
-	
+
 	const ON_ITEM_CLICK_HREF = "href";
 	const ON_ITEM_CLICK_FORM_SUBMIT = "submit";
 	const ON_ITEM_CLICK_FORM_SELECT = "select";
@@ -31,7 +31,7 @@ class ilAdvancedButtonGUI
 	const STYLE_LINK = 1;
 	const STYLE_EMPH = 2;
 	const STYLE_LINK_BUTTON = 3;
-	
+
 	protected $css_row = "";
 	protected $access_key = false;
 	protected $toggle = false;
@@ -42,17 +42,17 @@ class ilAdvancedButtonGUI
 	protected $grouped_list = null;
 	protected $style = 0;
 	private $dd_pullright = true;
-	
+
 	/*
-	
+
 	The modes implement the following html for non-js fallback:
-	
+
 	MODE_LINKS:
-	
+
 	<a href="...">...</a> <a href="...">...<a>
 
 	MODE_FORM_SELECT: (form and submit tags are optional)
-	
+
 	<form id="..." class="..." method="post" action="..." target="_top">
 	<select name="..."  class="..." size="0">
 	<option value="...">...</option>
@@ -60,12 +60,12 @@ class ilAdvancedButtonGUI
 	</select>
 	<input class="ilEditSubmit" type="submit" value="Go"/>
 	</form>
-	
+
 	*/
 
 	/**
 	* Constructor.
-	*	
+	*
 	*/
 	public function __construct()
 	{
@@ -130,17 +130,17 @@ class ilAdvancedButtonGUI
 			"onclick" => $a_onclick, "ttip" => $a_ttip, "tt_my" => $a_tt_my, "tt_at" => $a_tt_at,
 			"tt_use_htmlspecialchars" => $a_tt_use_htmlspecialchars);
 	}
-	
+
 	/**
 	 * Set Grouped List
 	 *
-	 * @param ilGroupedListGUI $a_val grouped list object	
+	 * @param ilGroupedListGUI $a_val grouped list object
 	 */
 	function setGroupedList($a_val)
 	{
 		$this->grouped_list = $a_val;
 	}
-	
+
 	/**
 	 * Get Grouped List
 	 *
@@ -155,7 +155,7 @@ class ilAdvancedButtonGUI
 	{
 		$this->items = array();
 	}
-	
+
 	/**
 	* Get items
 	*
@@ -165,7 +165,7 @@ class ilAdvancedButtonGUI
 	{
 		return $this->items;
 	}
-	
+
 	/**
 	* Set List Title.
 	*
@@ -207,7 +207,7 @@ class ilAdvancedButtonGUI
 	{
 		return $this->selectionheaderclass;
 	}
-	
+
 	/**
 	 * Set style
 	 *
@@ -217,7 +217,7 @@ class ilAdvancedButtonGUI
 	{
 		$this->style = $a_val;
 	}
-	
+
 	/**
 	 * Get style
 	 *
@@ -227,19 +227,19 @@ class ilAdvancedButtonGUI
 	{
 		return $this->style;
 	}
-	
-	
-	
+
+
+
 	/**
 	 * Set selection header span class
 	 *
-	 * @param string $a_val header span class	
+	 * @param string $a_val header span class
 	 */
 	function setSelectionHeaderSpanClass($a_val)
 	{
 		$this->sel_head_span_class = $a_val;
 	}
-	
+
 	/**
 	 * Get selection header span class
 	 *
@@ -359,7 +359,7 @@ class ilAdvancedButtonGUI
 	{
 		$this->access_key = $a_val;
 	}
-	
+
 	/**
 	* Get access key
 	*
@@ -417,17 +417,17 @@ class ilAdvancedButtonGUI
 		$this->on_click = $a_val;
 		$this->on_click_form_id = $a_onclick_form_id;
 	}
-	
+
 	/**
 	* Get "onClick"-Mode
 	*
-	* @return	
+	* @return
 	*/
 	function getOnClickMode()
 	{
 		return $this->on_click;
 	}
-	
+
 	/**
 	* Set selected value
 	*
@@ -437,7 +437,7 @@ class ilAdvancedButtonGUI
 	{
 		$this->selected_value = $a_val;
 	}
-	
+
 	/**
 	* Get selected value
 	*
@@ -447,7 +447,7 @@ class ilAdvancedButtonGUI
 	{
 		return $this->selected_value;
 	}
-	
+
 	/**
 	* Set additional toggle element
 	*
@@ -458,7 +458,7 @@ class ilAdvancedButtonGUI
 	{
 		$this->toggle = array("el" => $a_el, "class_on" => $a_on);
 	}
-	
+
 	/**
 	* Get additional toggle element
 	*
@@ -468,7 +468,7 @@ class ilAdvancedButtonGUI
 	{
 		return $this->toggle;
 	}
-	
+
 	/**
 	* Set asynch mode (this is set to true, if list should get items asynchronously)
 	*
@@ -483,7 +483,7 @@ class ilAdvancedButtonGUI
 		}
 		$this->asynch = $a_val;
 	}
-	
+
 	/**
 	* Get asynch mode
 	*
@@ -493,7 +493,7 @@ class ilAdvancedButtonGUI
 	{
 		return $this->asynch;
 	}
-	
+
 	/**
 	* Set asynch url
 	*
@@ -503,7 +503,7 @@ class ilAdvancedButtonGUI
 	{
 		$this->asynch_url = $a_val;
 	}
-	
+
 	/**
 	* Get asynch url
 	*
@@ -566,13 +566,13 @@ class ilAdvancedButtonGUI
 		/* bootstrap made this obsolete ?!
 		include_once("./Services/YUI/classes/class.ilYuiUtil.php");
 		ilYuiUtil::initOverlay();
-		$GLOBALS["tpl"]->addJavascript("./Services/UIComponent/Overlay/js/ilOverlay.js");					
+		$GLOBALS["tpl"]->addJavascript("./Services/UIComponent/Overlay/js/ilOverlay.js");
 		*/
-		$GLOBALS["tpl"]->addJavascript("./Services/UIComponent/AdvancedSelectionList/js/AdvancedSelectionList.js");		 
-		
+		$GLOBALS["tpl"]->addJavascript("./Services/UIComponent/AdvancedSelectionList/js/AdvancedSelectionList.js");
+
 		$tpl = new ilTemplate("tpl.toolbar.html", true, true,
 			"Customizing/global/plugins/Services/Repository/RepositoryObject/Todolists", "DEFAULT", false, true);
-			
+
 		reset($items);
 
 		$cnt = 0;
@@ -719,7 +719,7 @@ class ilAdvancedButtonGUI
 					$tpl->setVariable("IT_HID_NAME", $this->form_mode["select_name"]);
 					$tpl->setVariable("IT_HID_VAL", $item["value"]);
 					$tpl->setVariable("IT_TITLE", str_replace("'", "\\'", $item["title"]));
-					$tpl->parseCurrentBlock();					 					
+					$tpl->parseCurrentBlock();
 				}
 
 				// output hidden input, if click mode is form submission
@@ -744,9 +744,9 @@ class ilAdvancedButtonGUI
 					$tpl->setVariable("HID_VALUE", $this->getSelectedValue());
 					$tpl->parseCurrentBlock();
 				}
-			}						
+			}
 		}
-		
+
 		if ($a_only_cmd_list_asynch)
 		{
 			$tpl->touchBlock("cmd_table");
@@ -784,8 +784,8 @@ class ilAdvancedButtonGUI
 			}
 			$tpl->parseCurrentBlock();
 		}
-		
-		
+
+
 		if($this->getAsynch())
 		{
 			$tpl->setCurrentBlock("asynch_bl");
@@ -794,7 +794,7 @@ class ilAdvancedButtonGUI
 			$tpl->setVariable("ASYNCH_TRIGGER_ID", $this->getId());
 			$tpl->parseCurrentBlock();
 		}
-	
+
 		// js section
 		$tpl->setCurrentBlock("js_section");
 		if ($this->getAccessKey() > 0)
@@ -821,13 +821,13 @@ class ilAdvancedButtonGUI
 			$cfg["toggle_el"] = $toggle["el"];
 			$cfg["toggle_class_on"] = $toggle["class_on"];
 		}
-		include_once("./Services/JSON/classes/class.ilJsonUtil.php");		  
-		$tpl->setVariable("CFG", ilJsonUtil::encode($cfg));		 
-			
-		
+		include_once("./Services/JSON/classes/class.ilJsonUtil.php");
+		$tpl->setVariable("CFG", ilJsonUtil::encode($cfg));
+
+
 		$tpl->setVariable("TXT_SEL_TOP", $this->getListTitle());
 		$tpl->setVariable("ID", $this->getId());
-		
+
 		//$tpl->setVariable("CLASS_SEL_TOP", $this->getSelectionHeaderClass());
 		switch ($this->getStyle())
 		{

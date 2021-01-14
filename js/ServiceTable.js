@@ -1,9 +1,17 @@
+//Copyright (c) 1998-2009 ILIAS open source, Extended GPL, see LICENSE
+
+/*
+Changed html files of the IlTableGUI in Services/Table in Ilias written by
+
+Alex Killing <alex.killing@gmx.de>
+Sascha Hofmann <shofmann@databay.de>
+*/
 
 // Hide all on load
 il.Util.addOnLoad(ilInitTableFilters)
 var ilTableHideFilter = new Object();
 
-/** 
+/**
 * Hide all ilFormHelpLink elements
 */
 function ilInitTableFilters()
@@ -105,7 +113,7 @@ function ilTableJSHandler(sUrl)
 	};
 
 	var request = YAHOO.util.Connect.asyncRequest('GET', sUrl, ilTableCallback);
-	
+
 	return false;
 }
 
