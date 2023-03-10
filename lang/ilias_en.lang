@@ -1,13 +1,13 @@
 // 
-// English language file for ExampleObject plugin
+// English language file for Todolists plugin
 //
 
 <!-- language file start -->
 obj_xtdo#:#Todolist
-objs_xtdo#:#Todolist
+objs_xtdo#:#Todolists
 obj_xtdo_duplicate#:#Copy
 objs_xtdo_duplicate#:#Copy Todolist
-obj_xtdo_select#:#Choose Todoliste
+obj_xtdo_select#:#Choose Todolist
 xtdo_add#:#Add Todolist
 xtdo_new#:#Add new Todolist
 xtdo_read#:#Read permissions for the Todolist
@@ -16,10 +16,10 @@ xtdo_delete#:#Delete Todolist
 xtdo_visible#:#The Todolist is visible
 xtdo_edit_permission#:#Edit permission settings
 crs_create_xtdo#:#Create Todolist
-grp_create_xtdo#:#Create Todoliste
-fold_create_xtdo#:#Create Todoliste
-root_create_xtdo#:#Create Todoliste
-cat_create_xtdo#:#Create Todoliste
+grp_create_xtdo#:#Create Todolist
+fold_create_xtdo#:#Create Todolist
+root_create_xtdo#:#Create Todolist
+cat_create_xtdo#:#Create Todolist
 content#:#Content
 title#:#Title
 description#:#Description
@@ -29,10 +29,10 @@ cancel#:#Cancel
 edit#:#Edit
 status#:#Status
 offline#:#Offline
-example_plugin_configuration#:#Todolists Plugin Konfiguration
+example_plugin_configuration#:#Todolists Plugin Configuration
 setting_1#:#Setting 1
 setting_2#:#Setting 2
-saving_invoked#:#Save procedure has been executed. Please note that this example does not save anything to DB.
+saving_invoked#:#Save procedure has been executed.
 
 xtdo_edit_content#:#Tasks can be edited
 xtdo_add_entry#:#New Tasks can be added
@@ -47,7 +47,7 @@ status#:#Status
 
 first_start#:#Initial settings
 text_befor_id#:#List ID: 
-text_after_id_collectlist#:#These is required for the correct collect list assignment
+text_after_id_collectlist#:#These is required for the correct collect list assignment.
 percentbar_text#:#are already processed
 addtaskall#:#Add all lists
 todo#:#Task
@@ -56,7 +56,7 @@ list#:#Taskslist
 the_list#:#The Taskslist
 startdate#:#Start date
 enddate#:#End date
-moreProperties#:#Advanced settings
+moreProperties#:#Show/Hide advanced settings
 newtask#:#Add task
 
 action#:#Action
@@ -67,7 +67,7 @@ edit_task#:#Edit Task
 startendchange#:#Should be the date modified?
 failure_collectlist#:#The selected object is not a collect list. Please choose a collect list!
 percent#:#Percent
-doublesubmission#:#The web page has been reloaded, your version was not up-to-date
+doublesubmission#:#The web page has been reloaded, your version was not up-to-date.
 
 properties#:#Properties
 edit_properties#:#Edit properties
@@ -77,7 +77,7 @@ edit_no_collectlist#:#Collect list settings
 enddate_props#:#End date settings
 
 edit_status_checkbox#:#Show Change Status button
-edit_status_checkbox_info#:#Activates a button whith which the status can be changed. If the button is deactivated the status can be changed through the red cross icon in the status column.
+edit_status_checkbox_info#:#Activates a button with which the status can be changed. If the button is deactivated the status can be changed through the red cross icon in the status column.
 
 edit_status_permission#:#Status edit permissions
 edit_status_permission_info#:#If the option is activated the user will need an "Edit content" permission to be able to change the task status. If the option is deactivated the task status can be changed from every user who has a read permission.
@@ -119,7 +119,7 @@ enddate_cursive_info#:#If the option is activated, the end date will be shown wi
 enddate_fat#:#End date bold
 enddate_fat_info#:#If the option is activated, the end date will be shown with bold font after it exceeds.
 
-enddate_color#:#End date colorful
+enddate_color#:#End date colored
 enddate_color_info#:#If the option is activated, the end date will be shown with the selected color after the date exceeds.
 
 startdate_before#:#Show not reached start date
@@ -141,7 +141,7 @@ choosemilestone#:#Here you can assign the task to the milestones of the list.
 
 edit_status_props#:#Status settings
 edit_status_position#:#Status position
-edit_status_position_info#:#If the option is activated the status next to the actionbutton will be shown.
+edit_status_position_info#:#If the option is activated the status next to the action button will be shown.
 
 show_description#:#Show description
 show_description_info#:#Activates a column in the table where the description of the task is being shown.
