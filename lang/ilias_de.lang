@@ -1,25 +1,25 @@
 // 
-// German language file for ExampleObject plugin
+// German language file for Todolists plugin
 //
 
 <!-- language file start -->
-obj_xtdo#:#Todolist
-objs_xtdo#:#Todolist
+obj_xtdo#:#ToDo-Liste
+objs_xtdo#:#ToDo-Listen
 obj_xtdo_duplicate#:#Kopieren
-objs_xtdo_duplicate#:#Kopiere Todoliste
-obj_xtdo_select#:#Wähle Todoliste
-xtdo_add#:#Todoliste hinzufügen
-xtdo_new#:#Neue Todoliste hinzufügen
-xtdo_read#:#Leserechte für Todolist
-xtdo_write#:#Todolist Bearbeiten
+objs_xtdo_duplicate#:#Kopiere ToDo-Liste
+obj_xtdo_select#:#Wähle ToDo-Liste
+xtdo_add#:#ToDo-Liste hinzufügen
+xtdo_new#:#Neue ToDo-Liste hinzufügen
+xtdo_read#:#Leserechte für ToDo-Liste
+xtdo_write#:#ToDo-Liste bearbeiten
 xtdo_delete#:#Todoliste löschen
-xtdo_visible#:#Todolist ist sichtbar
+xtdo_visible#:#ToDo-Liste ist sichtbar
 xtdo_edit_permission#:#Ändere Rechteeinstellungen
-crs_create_xtdo#:#Erstelle Todoliste
-grp_create_xtdo#:#Erstelle Todoliste
-fold_create_xtdo#:#Erstelle Todoliste
-root_create_xtdo#:#Erstelle Todoliste
-cat_create_xtdo#:#Erstelle Todoliste
+crs_create_xtdo#:#Erstelle ToDo-Liste
+grp_create_xtdo#:#Erstelle ToDo-Liste
+fold_create_xtdo#:#Erstelle ToDo-Liste
+root_create_xtdo#:#Erstelle ToDo-Liste
+cat_create_xtdo#:#Erstelle ToDo-Liste
 content#:#Inhalt
 title#:#Titel
 description#:#Beschreibung
@@ -29,13 +29,13 @@ cancel#:#Zurück
 edit#:#Bearbeiten
 status#:#Status
 offline#:#Offline
-example_plugin_configuration#:#Todolists Plugin Konfiguration
+example_plugin_configuration#:#ToDo-Listen Plugin Konfiguration
 setting_1#:#Einstellung 1
 setting_2#:#Einstellung 2
-saving_invoked#:#Save procedure has been executed. Please note that this example does not save anything to DB.
+saving_invoked#:#Save procedure has been executed.
 
-xtdo_edit_content#:#Aufgaben dürfen bearbeitet werden
-xtdo_add_entry#:#Es dürfen neue Aufgaben hinzugefügt werden
+xtdo_edit_content#:#Aufgaben dürfen bearbeitet werden.
+xtdo_add_entry#:#Es dürfen neue Aufgaben hinzugefügt werden.
 task#:#Aufgabe
 startdate#:#Startdatum
 enddate#:#Enddatum
@@ -55,43 +55,41 @@ list#:#Hauptaufgabenliste
 the_list#:#Hauptaufgabenliste
 startdate#:#Anfangsdatum
 enddate#:#Enddatum
-moreProperties#:#Weitere Angaben
+moreProperties#:#Weitere Angaben ein/ausblenden
 newtask#:#Aufgabe hinzufügen
 
 action#:#Aktionen
-reallydelete#:#Möchten sie das Objekt wirklich löschen?
-deletetxt#:#Möchten sie das Objekt wirklich löschen?
+reallydelete#:#Möchten Sie das Objekt wirklich löschen?
+deletetxt#:#Möchten Sie das Objekt wirklich löschen?
 status_change#:#Status ändern
 edit_task#:#Aufgabe bearbeiten
 startendchange#:#Soll das Datum verändert werden?
-failure_collectlist#:#Dies ist keine Sammelliste bitte wählen sie eine Sammelliste.
+failure_collectlist#:#Dies ist keine Sammelliste. Bitte wählen sie eine Sammelliste.
 percent#:#Prozentanzeige
-changeshow#:#Ändern was Angezeigt wird
-doublesubmission#:#Seite wurde neu geladen Ihre Version war nicht aktuell
-
-
+changeshow#:#Ändern, was angezeigt wird
+doublesubmission#:#Seite wurde neu geladen. Ihre Version war nicht aktuell.
 
 properties#:#Einstellungen
 edit_properties#:#Einstellungen bearbeiten
 edit_special#:#Spezielle Einstellungen
 edit_fields#:#Spalten-Einstellungen
-edit_no_collectlist#:#Sammellisteneinstellungen
+edit_no_collectlist#:#Sammellisten-Einstellungen
 enddate_props#:#Einstellungen zum Enddatum
 
 edit_status_checkbox#:#Button zum Ändern des Status anzeigen
 edit_status_checkbox_info#:#Aktiviert einen Button, mit welchem der Status geändert werden kann. Ist dieser deaktiviert kann über ein Klicken auf das rote Kreuz, in der Spalte "Status" der Status geändert werden.
 
 edit_status_permission#:#Recht zum Ändern des Status
-edit_status_permission_info#:#Wenn diese Option aktiviert ist wird das Recht "Inhalt bearbeiten" benötigt um den Status einer Aufgabe abändern zu können. Wenn diese Option deaktiviert ist hat jeder der Lesezugriff auf die Liste hat das Recht, den Status einer Aufgabe abzuändern.
+edit_status_permission_info#:#Wenn diese Option aktiviert ist, wird das Recht "Inhalt bearbeiten" benötigt, um den Status einer Aufgabe abändern zu können. Wenn diese Option deaktiviert ist, hat jeder, der Lesezugriff auf die Liste hat, das Recht, den Status einer Aufgabe abzuändern.
 
 percent_line_option#:#Fortschrittsanzeige anzeigen
-percent_line_option_info#:#Aktiviert eine Fortschrittsanzeige überhalb der Tabelle, welche den Fortschritt bei den Aufgaben darstellt. 
+percent_line_option_info#:#Aktiviert eine Fortschrittsanzeige oberhalb der Tabelle, welche den Fortschritt bei den Aufgaben darstellt. 
 
 are_finished_shown#:#Nur offene Aufgaben anzeigen
-are_finished_shown_info#:#Wenn diese Option aktiviert ist werden nur Aufgaben angezeigt, welche noch nicht bearbeitet wurden.
+are_finished_shown_info#:#Wenn diese Option aktiviert ist, werden nur Aufgaben angezeigt, welche noch nicht bearbeitet wurden.
 
 before_startdate_shown#:#Startdatum erreicht
-before_startdate_shown_info#:#Wenn diese Option aktiviert ist werden nur Aufgaben angezeigt, welche bereits das Startdatum erreicht haben
+before_startdate_shown_info#:#Wenn diese Option aktiviert ist, werden nur Aufgaben angezeigt, welche bereits das Startdatum erreicht haben.
 
 collectlist#:#ID der Sammelliste
 collectlist_info#:#Hier muss die ID der Sammelliste eingetragen werden, in welcher diese Liste erscheinen soll. Die ID der Sammelliste finden Sie in den Einstellungen der Sammelliste.
@@ -100,20 +98,20 @@ show_createdby#:#Ersteller anzeigen
 show_createdby_info#:#Aktiviert eine Spalte in der Tabelle, in welcher der Ersteller der Aufgabe ausgegeben wird.
 
 show_updatedby#:#"Verändert von" anzeigen
-show_updatedby_info#:#Aktiviert eine Spalte in der Tabelle, in welcher angezeigt wird wer die Aufgabe zuletzt bearbeitet hat.
+show_updatedby_info#:#Aktiviert eine Spalte in der Tabelle, in welcher angezeigt wird, wer die Aufgabe zuletzt bearbeitet hat.
 
 show_startdate#:#Startdatum anzeigen
-show_startdate_info#:#Aktiviert eine Spalte in der Tabelle, in welcher das Startdatum der Aufgabe ausgegeben wird
+show_startdate_info#:#Aktiviert eine Spalte in der Tabelle, in welcher das Startdatum der Aufgabe ausgegeben wird.
 
 both#:#Fertige und Unfertige
 done#:#Fertige
 undone#:#Unfertige
 
 is_collectlist#:#Sammelliste
-is_collectlist_info#:#Bei Aktivierung ist diese Liste eine Sammelliste. D.h. diese Liste kann Aufgaben aus eingetragenen Listen, sowie eigene Aufgaben, verwalten. 
+is_collectlist_info#:#Bei Aktivierung ist diese Liste eine Sammelliste. D.h. diese Liste kann Aufgaben aus eingetragenen Listen sowie eigene Aufgaben verwalten. 
 
 enddate_warning#:#Enddatum markieren
-enddate_warning_info#:#Wird diese Option aktiviert wird das Enddatum einer Aufgabe nach den unteren Einstellungen verändert sobald dieses überschritten wird.
+enddate_warning_info#:#Wird diese Option aktiviert, wird das Enddatum einer Aufgabe nach den unteren Einstellungen verändert, sobald dieses überschritten wird.
 
 enddate_cursive#:#Enddatum kursiv
 enddate_cursive_info#:#Ausgabe des Enddatums in Kursivschrift, wenn dieses überschritten wurde.
@@ -121,10 +119,10 @@ enddate_cursive_info#:#Ausgabe des Enddatums in Kursivschrift, wenn dieses über
 enddate_fat#:#Enddatum fett
 enddate_fat_info#:#Ausgabe des Enddatums in Fettschrift, wenn dieses überschritten wurde.
 
-enddate_color#:#Enddatum farbe
+enddate_color#:#Enddatum Farbe
 enddate_color_info#:#Ausgabe des Enddatums in der gewählten Farbe, wenn dieses überschritten wurde.
 
-startdate_before#:#Startdatum nicht erreicht Anzeigen
+startdate_before#:#Startdatum nicht erreicht anzeigen
 
 milestone#:#Meilensteine
 progress#:#Fortschritt
@@ -134,28 +132,28 @@ addmilestoneall#:#Allen Listen hinzufügen
 milestone_task#:#Meilenstein zuordnen
 nothing#:#Keinen
 doublemilestone#:#Dieser Meilenstein exestiert bereits! Bitte versuchen sie es erneut.
-percentbar_text#:#der Hauptaufgabenliste sind bereits abgearbeitet
+percentbar_text#:#der Hauptaufgabenliste sind bereits abgearbeitet.
 new_task_all#:#Neue Aufgabe allen hinzufügen
 really_add#:#Möchten Sie diese Aufgabe wirklich allen Listen hinzufügen?
-choosemilestone#:#Hier können sie den Meilensteinen der Listen, diese Aufgabe zuweisen.
+choosemilestone#:#Hier können sie den Meilensteinen der Listen diese Aufgabe zuweisen.
 
 
 edit_status_props#:#Einstellungen zum Status
-edit_status_position#:#Status Position
-edit_status_position_info#:#Wird diese Option aktiviert wird der Status neben dem Aktionsbutton angezeigt.
+edit_status_position#:#Status-Position
+edit_status_position_info#:#Wird diese Option aktiviert, wird der Status neben dem Aktionsbutton angezeigt.
 
 show_description#:#Beschreibung anzeigen
-show_description_info#:#Aktiviert eine Spalte in der Tabelle, in welcher die Beschreibung der Aufgabe ausgegeben wird
+show_description_info#:#Aktiviert eine Spalte in der Tabelle, in welcher die Beschreibung der Aufgabe ausgegeben wird.
 show_enddate#:#Enddatum anzeigen
-show_enddate_info#:#Aktiviert eine Spalte in der Tabelle, in welcher das Enddatum der Aufgabe ausgegeben wird
+show_enddate_info#:#Aktiviert eine Spalte in der Tabelle, in welcher das Enddatum der Aufgabe ausgegeben wird.
 
 
-xtdo_copy#:#Todoliste kopieren
-rbac_create_xtdo#:#Todoliste erstellen
-obj_xtdo#:#Todoliste
+xtdo_copy#:#ToDo-Liste kopieren
+rbac_create_xtdo#:#ToDo-Liste erstellen
+obj_xtdo#:#ToDo-Liste
 
 
 save_settings#:#Speichern und zu Einstellungen weiterleiten
 collectionlist#:#Nur an dieser Stelle ist es möglich eine Liste als Sammelliste zu deklarieren.
-firstsettings#:#Zum Online schalten der Liste bitte nach dem Speichern die Einstellungen aufrufen.
+firstsettings#:#Zum Online schalten der Liste, bitte nach dem Speichern die Einstellungen aufrufen.
 attention#:#Achtung:
